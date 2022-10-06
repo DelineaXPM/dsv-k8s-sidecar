@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: custom-keys
+  namespace: default
+type: Opaque
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secret-example
+  namespace: sandbox05-pportal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: secret-example
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: secret-example
+      annotations:
+        dsv: yourtenantname
+    spec:
+      containers:
+        - name: bambe-example
+          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-example:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: client-volume
+              mountPath: /var/secret/
+        - name: bambe-client
+          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-client:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REFRESH_TIME
+              value: 5s
+            - name: THY_SECRETS
+              value: resources/us-east-1/server1
+            - name: LOG_LEVEL
+              value: info
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_SERVICEACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+                  # Required if broker is in different namespace
+            - name: BROKER_NAMESPACE
+              value: sandbox05-pportal
+          volumeMounts:
+            - name: client-volume
+              mountPath: /var/secret/
+              readOnly: false
+      volumes:
+        - name: client-volume
+          emptyDir: {}

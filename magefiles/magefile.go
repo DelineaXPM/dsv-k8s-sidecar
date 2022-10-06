@@ -4,19 +4,27 @@ package main
 import (
 	"os"
 
-	"github.com/DelineaXPM/REPLACEME/magefiles/constants"
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
+
+	//mage:import
+	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/kind"
+	//mage:import
+	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/cert"
+	// This breaks the the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
+	// "github.com/DelineaXPM/dsv-k8s/v2/magefiles/helm".
 
 	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
 	"github.com/sheldonhull/magetools/ci"
+	"github.com/sheldonhull/magetools/fancy"
+	"github.com/sheldonhull/magetools/pkg/req"
 	"github.com/sheldonhull/magetools/tooling"
-
 	// mage:import
-	"github.com/sheldonhull/magetools/gittools"
+	_ "github.com/sheldonhull/magetools/docgen"
 	// mage:import
 	"github.com/sheldonhull/magetools/gotools"
-	// mage:import
-	"github.com/sheldonhull/magetools/precommit"
 	//mage:import
 	_ "github.com/sheldonhull/magetools/secrets"
 )
@@ -37,28 +45,37 @@ func createDirectories() error {
 
 // Init runs multiple tasks to initialize all the requirements for running a project for a new contributor.
 func Init() error { //nolint:deadcode // Not dead, it's alive.
-	pterm.DefaultHeader.Println("running Init()")
+	fancy.IntroScreen(ci.IsCI())
+	pterm.Success.Println("running Init()...")
 
 	mg.SerialDeps(
 		Clean,
 		createDirectories,
 		(gotools.Go{}.Tidy),
-		(gotools.Go{}.Init),
 	)
 
 	if ci.IsCI() {
-		pterm.Debug.Println("CI detected, done with init")
+		pterm.Debug.Println("CI detected, installing remaining CI required tools")
+		if err := tooling.SilentInstallTools(CITools); err != nil {
+			return err
+		}
 		return nil
 	}
-
+	// These can run in parallel as different toolchains.
+	// Mg.Deps(
+	// 	(gittools.Gittools{}.Init),
+	// ).
 	pterm.DefaultSection.Println("Setup Project Specific Tools")
-	if err := tooling.SilentInstallTools(ToolList); err != nil {
+	if err := tooling.SilentInstallTools(toolList); err != nil {
 		return err
 	}
-	// These can run in parallel as different toolchains.
+
+	if err := sh.Run("docker", "pull", "alpine:latest"); err != nil {
+		return err
+	}
+
 	mg.Deps(
-		(gittools.Gittools{}.Init),
-		(precommit.Precommit{}.Init),
+		k8s.K8s{}.Init,
 	)
 	return nil
 }
@@ -74,4 +91,19 @@ func Clean() {
 		pterm.Success.Printf("🧹 [%s] dir removed\n", dir)
 	}
 	mg.Deps(createDirectories)
+}
+
+// 🔨 Build builds the project for the current platform.
+func Build() error {
+	binary, err := req.ResolveBinaryByInstall("goreleaser", "github.com/goreleaser/goreleaser@latest")
+	if err != nil {
+		return err
+	}
+
+	return sh.RunV(binary,
+		"build",
+		"--rm-dist",
+		"--snapshot",
+		"--single-target",
+	)
 }

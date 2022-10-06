@@ -1,0 +1,28 @@
+---
+comment: my-markdown-linting-rules
+default: true
+# MD003:
+#   style:
+MD007:
+  indent: 4
+no-hard-tabs: true
+whitespace: true
+no-bare-urls: true
+fenced-code-language: true
+no-inline-html: false
+MD004:
+  style: dash
+MD025:
+MD041: false
+MD013: false
+MD046:
+  false
+  #style: consistent
+
+# MD024/no-duplicate-heading/no-duplicate-header - Multiple headings with the same content
+MD024:
+  # Only check sibling headings
+  allow_different_nesting: true
+  # Only check sibling headings
+  siblings_only: true
+MD049: false

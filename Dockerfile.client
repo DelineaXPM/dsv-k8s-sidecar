@@ -1,0 +1,19 @@
+FROM golang:latest AS build-env
+
+ARG LD_FLAGS
+
+WORKDIR /go/src/github.com/DelineaXPM/dsv-k8s-sidecar
+COPY . .
+
+RUN go version
+RUN GO111MODULE=on CGO_ENABLED=0 go test ./...
+RUN GO111MODULE=on CGO_ENABLED=0 go build -ldflags "$LD_FLAGS" cmd/client/main.go
+
+FROM busybox:latest
+LABEL maintainer="thycotic.com"
+ENV CONTROLLER_SERVICE="localhost:3000"
+ENV CONFIG_DIR="/var/secret/"
+ENV REFRESH_TIME="15m"
+ENV LOG_LEVEL=""
+COPY --from=build-env /go/src/github.com/DelineaXPM/dsv-k8s-sidecar /
+CMD /main -log-level $LOG_LEVEL

@@ -58,3 +58,20 @@ tools
 _artifacts
 **/*/bin
 mage_output_file.go
+.cache/
+## No secrets in this project!
+## We should persist these in artifact, azure library, or use DSV command line.
+## Do not include secrets in the repo.
+**/*/id_rsa.pub
+**/*/id_rsa
+**/*/id_dsa.pub
+**/*/id_dsa
+**/*/*.pem
+**/*/*.key
+*.pem
+id_rsa.pub
+id_rsa
+id_dsa.pub
+id_dsa
+*.key
+*.csr
