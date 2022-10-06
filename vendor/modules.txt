@@ -1,0 +1,184 @@
+# atomicgo.dev/cursor v0.1.1
+## explicit; go 1.15
+atomicgo.dev/cursor
+# atomicgo.dev/keyboard v0.2.8
+## explicit; go 1.15
+atomicgo.dev/keyboard
+atomicgo.dev/keyboard/internal
+atomicgo.dev/keyboard/keys
+# bitbucket.org/creachadair/shell v0.0.7
+## explicit; go 1.16
+bitbucket.org/creachadair/shell
+# github.com/bitfield/script v0.20.2
+## explicit; go 1.12
+github.com/bitfield/script
+# github.com/containerd/console v1.0.3
+## explicit; go 1.13
+github.com/containerd/console
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+github.com/davecgh/go-spew/spew
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+github.com/dgrijalva/jwt-go
+# github.com/dustin/go-humanize v1.0.0
+## explicit
+github.com/dustin/go-humanize
+# github.com/ericchiang/k8s v1.2.0
+## explicit
+github.com/ericchiang/k8s
+github.com/ericchiang/k8s/apis/apiextensions/v1beta1
+github.com/ericchiang/k8s/apis/core/v1
+github.com/ericchiang/k8s/apis/meta/v1
+github.com/ericchiang/k8s/apis/resource
+github.com/ericchiang/k8s/runtime
+github.com/ericchiang/k8s/runtime/schema
+github.com/ericchiang/k8s/util/intstr
+github.com/ericchiang/k8s/watch/versioned
+# github.com/golang/mock v1.1.1
+## explicit
+github.com/golang/mock/gomock
+# github.com/golang/protobuf v1.2.0
+## explicit
+github.com/golang/protobuf/proto
+github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/ptypes/any
+github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/timestamp
+# github.com/gookit/color v1.5.0
+## explicit; go 1.13
+github.com/gookit/color
+# github.com/gorilla/context v1.1.1
+## explicit
+github.com/gorilla/context
+# github.com/gorilla/mux v1.6.2
+## explicit
+github.com/gorilla/mux
+# github.com/itchyny/gojq v0.12.7
+## explicit; go 1.16
+github.com/itchyny/gojq
+# github.com/itchyny/timefmt-go v0.1.3
+## explicit; go 1.14
+github.com/itchyny/timefmt-go
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+## explicit
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/lithammer/fuzzysearch v1.1.5
+## explicit; go 1.15
+github.com/lithammer/fuzzysearch/fuzzy
+# github.com/logrusorgru/aurora v2.0.3+incompatible
+## explicit
+github.com/logrusorgru/aurora
+# github.com/magefile/mage v1.13.0
+## explicit; go 1.12
+github.com/magefile/mage/mg
+github.com/magefile/mage/sh
+# github.com/mattn/go-runewidth v0.0.13
+## explicit; go 1.9
+github.com/mattn/go-runewidth
+# github.com/pmezard/go-difflib v1.0.0
+## explicit
+github.com/pmezard/go-difflib/difflib
+# github.com/pterm/pterm v0.12.45
+## explicit; go 1.15
+github.com/pterm/pterm
+github.com/pterm/pterm/internal
+# github.com/rivo/uniseg v0.2.0
+## explicit; go 1.12
+github.com/rivo/uniseg
+# github.com/sheldonhull/magetools v0.0.12
+## explicit; go 1.18
+github.com/sheldonhull/magetools/ci
+github.com/sheldonhull/magetools/docgen
+github.com/sheldonhull/magetools/fancy
+github.com/sheldonhull/magetools/gotools
+github.com/sheldonhull/magetools/pkg/magetoolsutils
+github.com/sheldonhull/magetools/pkg/req
+github.com/sheldonhull/magetools/secrets
+github.com/sheldonhull/magetools/tooling
+# github.com/sirupsen/logrus v1.2.0
+## explicit
+github.com/sirupsen/logrus
+# github.com/stretchr/testify v1.7.0
+## explicit; go 1.13
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/require
+github.com/stretchr/testify/suite
+# github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778
+## explicit; go 1.15
+github.com/xo/terminfo
+# github.com/ztrue/tracerr v0.3.0
+## explicit
+github.com/ztrue/tracerr
+# golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
+## explicit
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/mod v0.5.1
+## explicit; go 1.17
+golang.org/x/mod/internal/lazyregexp
+golang.org/x/mod/modfile
+golang.org/x/mod/module
+golang.org/x/mod/semver
+# golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+## explicit; go 1.11
+golang.org/x/net/context
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+golang.org/x/net/internal/timeseries
+golang.org/x/net/trace
+# golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
+## explicit; go 1.17
+golang.org/x/term
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
+golang.org/x/text/runes
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
+## explicit; go 1.11
+golang.org/x/xerrors
+golang.org/x/xerrors/internal
+# google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
+## explicit
+google.golang.org/genproto/googleapis/rpc/status
+# google.golang.org/grpc v1.16.0
+## explicit
+google.golang.org/grpc
+google.golang.org/grpc/balancer
+google.golang.org/grpc/balancer/base
+google.golang.org/grpc/balancer/roundrobin
+google.golang.org/grpc/codes
+google.golang.org/grpc/connectivity
+google.golang.org/grpc/credentials
+google.golang.org/grpc/encoding
+google.golang.org/grpc/encoding/proto
+google.golang.org/grpc/grpclog
+google.golang.org/grpc/internal
+google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/channelz
+google.golang.org/grpc/internal/envconfig
+google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/transport
+google.golang.org/grpc/keepalive
+google.golang.org/grpc/metadata
+google.golang.org/grpc/naming
+google.golang.org/grpc/peer
+google.golang.org/grpc/resolver
+google.golang.org/grpc/resolver/dns
+google.golang.org/grpc/resolver/passthrough
+google.golang.org/grpc/stats
+google.golang.org/grpc/status
+google.golang.org/grpc/tap
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+## explicit
+gopkg.in/yaml.v3

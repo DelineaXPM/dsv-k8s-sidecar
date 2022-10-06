@@ -39,7 +39,7 @@ lint:
     - linters: [ALL]
       paths:
         - .devcontainer/init
-        # - vendor/*
+        - vendor/*
     # - linters: [markdownlint]
     #   paths:
     #     # in progress changelog notes
