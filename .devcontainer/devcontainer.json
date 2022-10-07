@@ -47,7 +47,9 @@
   "settings": {
     "terminal.integrated.profiles.linux": {
       "zsh-login": {
-        "args": ["-l"],
+        "args": [
+          "-l"
+        ],
         "icon": "terminal-bash",
         "path": "zsh"
       }
@@ -64,10 +66,12 @@
   "remoteUser": "vscode",
   "containerEnv": {
     "GITHUB_OATH_TOKEN": "${env:GITHUB_OATH_TOKEN}",
-    "GOPATH": "/home/vscode/go/"
-    //"GOROOT": "/home/vscode/.local/share/aquaproj-aqua/bin"
+    "GOPATH": "/home/vscode/go/",
+    "PATH": "/home/vscode/.local/share/aquaproj-aqua/bin:${containerEnv:PATH}"
   },
-  "initializeCommand": [".devcontainer/init"],
+  "initializeCommand": [
+    ".devcontainer/init"
+  ],
   "hostRequirements": {
     "storage": "32gb"
   },
