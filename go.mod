@@ -9,7 +9,7 @@ require (
 	github.com/golang/mock v1.1.1
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/mux v1.6.2
-	github.com/magefile/mage v1.13.0
+	github.com/magefile/mage v1.14.0
 	github.com/pterm/pterm v0.12.45
 	github.com/sheldonhull/magetools v0.0.12
 	github.com/sirupsen/logrus v1.2.0
