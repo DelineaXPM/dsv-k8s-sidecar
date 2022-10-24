@@ -25,8 +25,6 @@ import (
 	_ "github.com/sheldonhull/magetools/docgen"
 	// mage:import
 	"github.com/sheldonhull/magetools/gotools"
-	//mage:import
-	_ "github.com/sheldonhull/magetools/secrets"
 )
 
 // createDirectories creates the local working directories for build artifacts and tooling.
@@ -63,7 +61,7 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 	}
 	// These can run in parallel as different toolchains.
 	// Mg.Deps(
-	// 	(gittools.Gittools{}.Init),
+	//
 	// ).
 	pterm.DefaultSection.Println("Setup Project Specific Tools")
 	if err := tooling.SilentInstallTools(toolList); err != nil {
