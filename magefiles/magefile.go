@@ -11,7 +11,7 @@ import (
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/kind"
 	//mage:import
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/cert"
-	// This breaks the the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
+	// This breaks the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
 	// "github.com/DelineaXPM/dsv-k8s/v2/magefiles/helm".
 
 	"github.com/magefile/mage/mg"
@@ -25,8 +25,6 @@ import (
 	_ "github.com/sheldonhull/magetools/docgen"
 	// mage:import
 	"github.com/sheldonhull/magetools/gotools"
-	//mage:import
-	_ "github.com/sheldonhull/magetools/secrets"
 )
 
 // createDirectories creates the local working directories for build artifacts and tooling.
@@ -63,7 +61,7 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 	}
 	// These can run in parallel as different toolchains.
 	// Mg.Deps(
-	// 	(gittools.Gittools{}.Init),
+	//
 	// ).
 	pterm.DefaultSection.Println("Setup Project Specific Tools")
 	if err := tooling.SilentInstallTools(toolList); err != nil {
