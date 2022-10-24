@@ -11,7 +11,7 @@ import (
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/kind"
 	//mage:import
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/cert"
-	// This breaks the the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
+	// This breaks the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
 	// "github.com/DelineaXPM/dsv-k8s/v2/magefiles/helm".
 
 	"github.com/magefile/mage/mg"
