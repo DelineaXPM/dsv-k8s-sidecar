@@ -1,8 +1,8 @@
 .github @DelineaXPM/dsv-admins
 CODEOWNERS @DelineaXPM/dsv-admins
 
-# renovate bot and no review required
-aqua.yaml
-
 # all others
 * @DelineaXPM/dsv-contributors
+
+# renovate bot and no review required
+aqua.yaml
