@@ -6,7 +6,7 @@ require (
 	github.com/bitfield/script v0.20.2
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/ericchiang/k8s v1.2.0
-	github.com/golang/mock v1.1.1
+	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/mux v1.6.2
 	github.com/magefile/mage v1.14.0
@@ -38,7 +38,7 @@ require (
 	github.com/ztrue/tracerr v0.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect

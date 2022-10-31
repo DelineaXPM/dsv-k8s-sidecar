@@ -35,8 +35,8 @@ github.com/ericchiang/k8s/runtime
 github.com/ericchiang/k8s/runtime/schema
 github.com/ericchiang/k8s/util/intstr
 github.com/ericchiang/k8s/watch/versioned
-# github.com/golang/mock v1.1.1
-## explicit
+# github.com/golang/mock v1.6.0
+## explicit; go 1.11
 github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.2.0
 ## explicit
@@ -118,7 +118,7 @@ golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
+# golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 ## explicit; go 1.11
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
