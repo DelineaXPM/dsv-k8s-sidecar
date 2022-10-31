@@ -1,2 +1,15 @@
-.github @DelineaXPM/dsv-admins
+# all others
 * @DelineaXPM/dsv-contributors
+
+# require admin review
+.github @DelineaXPM/dsv-admins
+ CODEOWNERS @DelineaXPM/dsv-admins
+
+# all others
+* @DelineaXPM/dsv-contributors
+
+# renovate bot and no review required
+aqua.yaml
+
+# no extra review required for devcontainer updates
+.devcontainer/
