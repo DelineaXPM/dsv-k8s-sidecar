@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/ericchiang/k8s v1.2.0
 	github.com/golang/mock v1.6.0
-	github.com/golang/protobuf v1.2.0
+	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.6.2
 	github.com/magefile/mage v1.14.0
 	github.com/pterm/pterm v0.12.49
@@ -43,5 +43,6 @@ require (
 	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8 // indirect
+	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
