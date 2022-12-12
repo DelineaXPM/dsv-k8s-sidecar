@@ -79,7 +79,7 @@ github.com/mattn/go-runewidth
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/pterm/pterm v0.12.49
+# github.com/pterm/pterm v0.12.50
 ## explicit; go 1.18
 github.com/pterm/pterm
 github.com/pterm/pterm/internal
