@@ -4,7 +4,7 @@ RUN cd /go/src/example-project \
   && go get ./... \
   && CGO_ENABLED=0 GOOS=linux go build main.go
 
-FROM busybox:1.29.3
+FROM busybox:1.35.0
 LABEL maintainer="thycotic.com"
 ENV CONTROLLER_SERVICE="localhost"
 COPY --from=build-env /go/src/example-project /
