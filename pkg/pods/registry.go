@@ -53,11 +53,18 @@ func NewPodRegistry(tenant, namespace string) PodRegistry {
 	}
 
 	go func(tenant string, watcher *k8s.Watcher, create, update, remove chan<- *corev1.Pod) {
+		//TODO: This should be change from pull to push , other wise this will create a problem 
 		for {
 			p := new(corev1.Pod)
 			eventType, err := watcher.Next(p)
 			if err != nil {
 				log.WithField("error", err.Error()).Error("Error getting pod")
+				watcher, err = client.Watch(ctx, namespace, &pod)
+				if err != nil{
+					log.WithField("error", err.Error()).Error("not able to recreate pod watcher")
+					panic(err)
+				}
+				continue
 			}
 
 			t, exists := p.Metadata.Annotations["dsv"]
