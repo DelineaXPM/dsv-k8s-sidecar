@@ -1,18 +1,18 @@
 ---
 registries:
   - type: standard
-    ref: v3.118.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v3.123.0 # renovate: depName=aquaproj/aqua-registry
   - name: local
     type: local
     path: registry.yaml
 packages:
   - name: miniscruff/changie@v1.10.2
-  - name: golang/go@go1.19.4
+  - name: golang/go@go1.19.5
   - name: direnv/direnv@v2.32.2
   - name: magefile/mage@v1.14.0
   - name: charmbracelet/glow@v1.4.1
-  - name: helm/helm@v3.10.3
-  - name: kubernetes/kubectl@v1.26.0
+  - name: helm/helm@v3.11.0
+  - name: kubernetes/kubectl@v1.26.1
   - name: kubernetes-sigs/kind@v0.17.0
   - name: cloudflare/cfssl@v1.6.3
   - name: cfssljson
