@@ -30,5 +30,5 @@
 
 # If you change the copy location, you'll want to make sure to change the path in the helm charts and publish a new version.
 FROM gcr.io/distroless/static:nonroot
-COPY dsv-syncer /app/dsv-syncer
-COPY dsv-injector /app/dsv-injector
+COPY controller /app/dsv-syncer
+COPY client /app/dsv-injector

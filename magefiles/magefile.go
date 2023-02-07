@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
@@ -140,4 +142,20 @@ func InstallTrunk() error {
 // TrunkInit ensures the required runtimes are installed.
 func TrunkInit() error {
 	return sh.RunV("trunk", "install")
+}
+
+// getVersion returns the version and path for the changefile to use for the semver and release notes.
+func getVersion() (releaseVersion, cleanPath string, err error) { //nolint:unparam // leaving as optional parameter for future release tasks.
+
+	releaseVersion, err = sh.Output("changie", "latest")
+	if err != nil {
+		pterm.Error.Printfln("changie pulling latest release note version failure: %v", err)
+		return "", "", err
+	}
+	cleanVersion := strings.TrimSpace(releaseVersion)
+	cleanPath = filepath.Join(".changes", cleanVersion+".md")
+	if os.Getenv("GITHUB_WORKSPACE") != "" {
+		cleanPath = filepath.Join(os.Getenv("GITHUB_WORKSPACE"), ".changes", cleanVersion+".md")
+	}
+	return cleanVersion, cleanPath, nil
 }
