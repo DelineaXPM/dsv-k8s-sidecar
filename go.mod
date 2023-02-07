@@ -3,14 +3,14 @@ module github.com/DelineaXPM/dsv-k8s-sidecar
 go 1.18
 
 require (
-	github.com/bitfield/script v0.20.2
+	github.com/bitfield/script v0.21.4
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/ericchiang/k8s v1.2.0
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/mux v1.6.2
 	github.com/magefile/mage v1.14.0
-	github.com/pterm/pterm v0.12.49
+	github.com/pterm/pterm v0.12.50
 	github.com/sheldonhull/magetools v1.0.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/stretchr/testify v1.8.1

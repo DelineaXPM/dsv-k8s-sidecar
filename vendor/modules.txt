@@ -9,7 +9,7 @@ atomicgo.dev/keyboard/keys
 # bitbucket.org/creachadair/shell v0.0.7
 ## explicit; go 1.16
 bitbucket.org/creachadair/shell
-# github.com/bitfield/script v0.20.2
+# github.com/bitfield/script v0.21.4
 ## explicit; go 1.12
 github.com/bitfield/script
 # github.com/containerd/console v1.0.3
@@ -79,7 +79,7 @@ github.com/mattn/go-runewidth
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/pterm/pterm v0.12.49
+# github.com/pterm/pterm v0.12.50
 ## explicit; go 1.18
 github.com/pterm/pterm
 github.com/pterm/pterm/internal
