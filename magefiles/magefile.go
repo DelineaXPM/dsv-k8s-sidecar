@@ -2,10 +2,14 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
+	"runtime"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
+	"github.com/bitfield/script"
 
 	//mage:import
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/kind"
@@ -19,8 +23,10 @@ import (
 	"github.com/pterm/pterm"
 	"github.com/sheldonhull/magetools/ci"
 	"github.com/sheldonhull/magetools/fancy"
-	"github.com/sheldonhull/magetools/pkg/req"
+	"github.com/sheldonhull/magetools/pkg/magetoolsutils"
+
 	"github.com/sheldonhull/magetools/tooling"
+
 	// mage:import
 	_ "github.com/sheldonhull/magetools/docgen"
 	// mage:import
@@ -43,6 +49,7 @@ func createDirectories() error {
 
 // Init runs multiple tasks to initialize all the requirements for running a project for a new contributor.
 func Init() error { //nolint:deadcode // Not dead, it's alive.
+var err error
 	fancy.IntroScreen(ci.IsCI())
 	pterm.Success.Println("running Init()...")
 
@@ -54,9 +61,12 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 
 	if ci.IsCI() {
 		pterm.Debug.Println("CI detected, installing remaining CI required tools")
-		if err := tooling.SilentInstallTools(CITools); err != nil {
-			return err
+		pterm.DefaultSection.Println("aqua install of CI tooling")
+		if err := sh.RunV("aqua", "install","--tags","ci"); err != nil {
+			pterm.Error.Printfln("aqua install not successful, is the aqua installed?")
+			return fmt.Errorf("aqua install not successful, is the aqua installed? %v", err)
 		}
+		pterm.Success.Println("Init() complete")
 		return nil
 	}
 	// These can run in parallel as different toolchains.
@@ -68,13 +78,31 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 		return err
 	}
 
-	if err := sh.Run("docker", "pull", "alpine:latest"); err != nil {
-		return err
-	}
+	// if err := sh.Run("docker", "pull", "alpine:latest"); err != nil {
+	// 	return err
+	// }
 
 	mg.Deps(
 		k8s.K8s{}.Init,
 	)
+	if runtime.GOOS == "windows" {
+		pterm.Warning.Printfln("Trunk is not supported on windows, must run in WSL2, skipping trunk install")
+	} else {
+		if err = InstallTrunk(); err != nil {
+			pterm.Error.Printfln("failed to install trunk (try installing manually from: https://trunk.io/): %v", err)
+			return err
+		}
+	}
+
+		// Aqua install is run in devcontainer/codespace automatically.
+	// If this environment isn't being used, try to jump start, but if failure, output warning and let the developer choose if they want to go install or not.
+	pterm.DefaultSection.Println("aqua install of tooling")
+	if err := sh.RunV("aqua", "install"); err != nil {
+		pterm.Warning.Printfln("aqua install not successful.\n" +
+			"This is optional, but will ensure every tool for the project is installed and matching version." +
+			"To install see developer docs or go to https://aquaproj.github.io/docs/reference/install")
+	}
+	pterm.Success.Println("Init() complete")
 	return nil
 }
 
@@ -91,17 +119,24 @@ func Clean() {
 	mg.Deps(createDirectories)
 }
 
-// 🔨 Build builds the project for the current platform.
-func Build() error {
-	binary, err := req.ResolveBinaryByInstall("goreleaser", "github.com/goreleaser/goreleaser@latest")
-	if err != nil {
-		return err
-	}
 
-	return sh.RunV(binary,
-		"build",
-		"--rm-dist",
-		"--snapshot",
-		"--single-target",
-	)
+// InstallTrunk installs trunk.io tooling if it isn't already found.
+func InstallTrunk() error {
+	magetoolsutils.CheckPtermDebug()
+	_, err := exec.LookPath("trunk")
+	if err != nil && os.IsNotExist(err) {
+		pterm.Warning.Printfln("unable to resolve aqua cli tool, please install for automated project tooling setup: https://aquaproj.github.io/docs/tutorial-basics/quick-start#install-aqua")
+		_, err := script.Exec("curl https://get.trunk.io -fsSL").Exec("bash -s -- -y").Stdout()
+		if err != nil {
+			return err
+		}
+	} else {
+		pterm.Success.Printfln("trunk.io already installed, skipping")
+	}
+	return nil
+}
+
+// TrunkInit ensures the required runtimes are installed.
+func TrunkInit() error {
+	return sh.RunV("trunk", "install")
 }
