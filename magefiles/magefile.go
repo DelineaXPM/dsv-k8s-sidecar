@@ -49,7 +49,7 @@ func createDirectories() error {
 
 // Init runs multiple tasks to initialize all the requirements for running a project for a new contributor.
 func Init() error { //nolint:deadcode // Not dead, it's alive.
-var err error
+	var err error
 	fancy.IntroScreen(ci.IsCI())
 	pterm.Success.Println("running Init()...")
 
@@ -62,9 +62,9 @@ var err error
 	if ci.IsCI() {
 		pterm.Debug.Println("CI detected, installing remaining CI required tools")
 		pterm.DefaultSection.Println("aqua install of CI tooling")
-		if err := sh.RunV("aqua", "install","--tags","ci"); err != nil {
+		if err := sh.RunV("aqua", "install", "--tags", "ci"); err != nil {
 			pterm.Error.Printfln("aqua install not successful, is the aqua installed?")
-			return fmt.Errorf("aqua install not successful, is the aqua installed? %v", err)
+			return fmt.Errorf("aqua install not successful, is the aqua installed? %w", err)
 		}
 		pterm.Success.Println("Init() complete")
 		return nil
@@ -85,6 +85,7 @@ var err error
 	mg.Deps(
 		k8s.K8s{}.Init,
 	)
+
 	if runtime.GOOS == "windows" {
 		pterm.Warning.Printfln("Trunk is not supported on windows, must run in WSL2, skipping trunk install")
 	} else {
@@ -92,9 +93,10 @@ var err error
 			pterm.Error.Printfln("failed to install trunk (try installing manually from: https://trunk.io/): %v", err)
 			return err
 		}
+		mg.Deps(TrunkInit)
 	}
 
-		// Aqua install is run in devcontainer/codespace automatically.
+	// Aqua install is run in devcontainer/codespace automatically.
 	// If this environment isn't being used, try to jump start, but if failure, output warning and let the developer choose if they want to go install or not.
 	pterm.DefaultSection.Println("aqua install of tooling")
 	if err := sh.RunV("aqua", "install"); err != nil {
@@ -118,7 +120,6 @@ func Clean() {
 	}
 	mg.Deps(createDirectories)
 }
-
 
 // InstallTrunk installs trunk.io tooling if it isn't already found.
 func InstallTrunk() error {

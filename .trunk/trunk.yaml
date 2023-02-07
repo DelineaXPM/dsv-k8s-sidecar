@@ -28,26 +28,22 @@ runtimes:
     - python@3.10.3
     - go@1.19 # make sure this matches what's in go.mod for this to work correctly.
 cli:
-  version: 1.0.1
-plugins:
-  sources:
-    - id: trunk
-      ref: v0.0.5
-      uri: https://github.com/trunk-io/plugins
+  version: 1.4.1
+
 lint:
   enabled:
-    - actionlint@1.6.21
+    - actionlint@1.6.23
     - git-diff-check@SYSTEM
-    - gitleaks@8.15.0
-    - gofmt@1.16.7
-    - golangci-lint@1.50.1
-    - hadolint@2.10.0
-    - markdownlint@0.32.2
-    - prettier@2.7.1
-    - shellcheck@0.8.0
+    - gitleaks@8.15.3
+    - gofmt@1.19.3
+    - golangci-lint@1.51.1
+    - hadolint@2.12.0
+    - markdownlint@0.33.0
+    - prettier@2.8.3
+    - shellcheck@0.9.0
     - shfmt@3.5.0
-    - taplo@release-taplo-cli-0.7.0
-    - yamllint@1.28.0
+    - taplo@0.7.0
+    - yamllint@1.29.0
   threshold:
     - linters: [markdownlint]
       level: high
@@ -59,3 +55,8 @@ lint:
     - linters: [yamllint]
       paths:
         - .changes/unreleased/*.yaml
+plugins:
+  sources:
+    - id: trunk
+      ref: v0.0.9
+      uri: https://github.com/trunk-io/plugins
