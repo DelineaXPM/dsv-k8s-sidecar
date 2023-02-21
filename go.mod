@@ -10,7 +10,7 @@ require (
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/mux v1.6.2
 	github.com/magefile/mage v1.14.0
-	github.com/pterm/pterm v0.12.50
+	github.com/pterm/pterm v0.12.54
 	github.com/sheldonhull/magetools v1.0.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/stretchr/testify v1.8.1
@@ -19,7 +19,7 @@ require (
 
 require (
 	atomicgo.dev/cursor v0.1.1 // indirect
-	atomicgo.dev/keyboard v0.2.8 // indirect
+	atomicgo.dev/keyboard v0.2.9 // indirect
 	bitbucket.org/creachadair/shell v0.0.7 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -43,7 +43,7 @@ require (
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/term v0.1.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
