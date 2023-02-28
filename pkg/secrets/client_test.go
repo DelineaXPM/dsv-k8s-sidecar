@@ -49,7 +49,7 @@ func (suite *ClientTestSuite) TestGetSecret() {
 		w.Write(body)
 	}))
 
-	os.Setenv("THY_API_URL", authTs.URL+"/%s")
+	os.Setenv("DSV_API_URL", authTs.URL+"/%s")
 	client := secrets.CreateSecretClient("foo", "id", "secret", "client_credentials")
 	client.Close()
 

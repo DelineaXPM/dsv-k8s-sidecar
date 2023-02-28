@@ -18,9 +18,7 @@ import (
 const controllerServiceName = "dsv-broker.%s:80"
 
 var (
-	keyDir          = util.EnvString("KEY_DIR", "/tmp/keys/")
-	serverCert      = keyDir + util.EnvString("SERVER_CRT", "ca.pem")
-	serverTokenCert = keyDir + util.EnvString("SERVER_CRT", "catoken.pem")
+	keyDir = util.EnvString("KEY_DIR", "/tmp/keys/")
 )
 
 func main() {
@@ -36,7 +34,7 @@ func main() {
 
 	name := os.Getenv("POD_NAME")
 	namespace := os.Getenv("POD_NAMESPACE")
-	ip := os.Getenv("POD_IP")
+	podIP := os.Getenv("POD_IP")
 	brokerNamespace := os.Getenv("BROKER_NAMESPACE")
 
 	if brokerNamespace == "" {
@@ -46,7 +44,7 @@ func main() {
 	log.WithFields(log.Fields{
 		"podName":         name,
 		"podNamespace":    namespace,
-		"podIp":           ip,
+		"podIp":           podIP,
 		"brokerNamespace": brokerNamespace,
 	}).Info("Client started")
 
@@ -55,12 +53,13 @@ func main() {
 		err   error
 	)
 
+	serverTokenCert := keyDir + util.EnvString("SERVER_CRT", "catoken.pem")
 	if _, err = os.Stat(serverTokenCert); err != nil {
-		log.Info("Connecting over TCP: token")
-		token, err = auth.GetToken(namespace+"/"+name, ip, brokerNamespace)
+		log.Info("Connecting over TCP: token ...")
+		token, err = auth.GetToken(namespace+"/"+name, podIP, brokerNamespace)
 	} else {
-		log.Info("Connecting with TLS: token")
-		token, err = auth.GetTLsToken(namespace+"/"+name, ip, brokerNamespace, serverTokenCert)
+		log.Info("Connecting with TLS: token ...")
+		token, err = auth.GetTLsToken(namespace+"/"+name, podIP, brokerNamespace, serverTokenCert)
 	}
 	if err != nil {
 		log.Fatalf("Unable to get token: %s", err)
@@ -86,7 +85,7 @@ func getGRPCConnection(token credentials.PerRPCCredentials, brokerNamespace stri
 		err  error
 	)
 
-	creds, err := credentials.NewClientTLSFromFile(serverCert, "")
+	creds, err := credentials.NewClientTLSFromFile(keyDir+util.EnvString("SERVER_CRT", "ca.pem"), "")
 	if err != nil {
 		log.Warn("Failed to get certificate keys: starting the server unsecure: ....", err.Error())
 		conn, err = grpc.Dial(url, grpc.WithInsecure(), grpc.WithPerRPCCredentials(token))

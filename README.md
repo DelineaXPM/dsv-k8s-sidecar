@@ -13,7 +13,7 @@ Note: there is no guarantee that the file has been created by the time the compa
 The sidecar must have the following ENV variables defined:
 
 ```yaml
-- name: THY_SECRETS
+- name: DSV_SECRETS
   value: foo bar us-east-1/baz
 - name: POD_IP
   valueFrom:
@@ -27,7 +27,7 @@ The sidecar must have the following ENV variables defined:
 
 The top value defines the paths of the secrets intended to be used by the container.
 This is a list separated by spaces.
-The broker watches for new pods with a the specific annotation *dsv* to come online with the value of the *tenant* intended to be used, it then adds this pod to the internal registry.
+The broker watches for new pods with a the specific annotation _dsv_ to come online with the value of the _tenant_ intended to be used, it then adds this pod to the internal registry.
 When the sidecar comes online it must first call the auth endpoint using it's podname and ip address.
 The broker requires the following environmental variables to be present:
 
@@ -99,7 +99,7 @@ Examples of kubernetes files can be found in the `k8s` folder
 
 ## Running Project Against Local Kind Cluster
 
-> ***tip***
+> **_tip_**
 > Further directions on development setup are in [Developer - Tasks](DEVELOPER.md#tasks).
 
 - `mage cert:generate` to create the local certs in `.cache` directory.

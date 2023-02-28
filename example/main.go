@@ -15,7 +15,7 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			b, err := ioutil.ReadFile(configDir + "thy.json")
+			b, err := ioutil.ReadFile(configDir + "dsv.json")
 			if err != nil {
 				logrus.WithField("error", err.Error()).Error("Unable to open file")
 				return

@@ -5,7 +5,7 @@ RUN cd /go/src/example-project \
     && CGO_ENABLED=0 GOOS=linux go build main.go
 
 FROM busybox:1.29.3
-LABEL maintainer="thycotic.com"
+LABEL maintainer="delinea.com"
 ENV CONTROLLER_SERVICE="localhost"
 COPY --from=build-env /go/src/example-project /
 CMD /main

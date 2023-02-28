@@ -29,19 +29,19 @@ spec:
     spec:
       containers:
         - name: bambe-example
-          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-example:latest
+          image: <image>
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: client-volume
               mountPath: /var/secret/
-        - name: bambe-client
-          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-client:latest
+        - name: dsv-client
+          image:: <sidecar image>
           imagePullPolicy: IfNotPresent
           env:
             - name: REFRESH_TIME
               value: 5s
-            - name: THY_SECRETS
-              value: resources/us-east-1/server1
+            - name: DSV_SECRETS
+              value: <secret path>
             - name: LOG_LEVEL
               value: info
             - name: POD_IP

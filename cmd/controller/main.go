@@ -35,11 +35,11 @@ var (
 )
 
 func main() {
-	var tenant, clientId, clientSecret, port, authport, authType, logLevel string
+	var tenant, clientID, clientSecret, port, authport, authType, logLevel string
 
 	flag.StringVar(&tenant, "tenant", "", "Required tenant name")
 	flag.StringVar(&authType, "auth-type", "", "Required authtype (client_credentials, certificate)")
-	flag.StringVar(&clientId, "client-id", "", "Client credential id Required, if authtype client_credentials")
+	flag.StringVar(&clientID, "client-id", "", "Client credential id Required, if authtype client_credentials")
 	flag.StringVar(&clientSecret, "client-secret", "", "Client credential proxy, Required if authtype client_credentials")
 	flag.StringVar(&port, "port", ":3000", "Port to run on")
 	flag.StringVar(&authport, "auth-port", ":8080", "Auth Port to run on")
@@ -57,12 +57,12 @@ func main() {
 		os.Exit(2)
 	}
 
-	if strings.ToLower(authType) == clientCredentials && (clientId == "" || clientSecret == "") {
+	if strings.ToLower(authType) == clientCredentials && (clientID == "" || clientSecret == "") {
 		log.Error("Required flags (client-id, client-secret) are missing")
 		os.Exit(2)
 	}
 
-	secretClient := secrets.CreateSecretClient(tenant, clientId, clientSecret, authType)
+	secretClient := secrets.CreateSecretClient(tenant, clientID, clientSecret, authType)
 	secretServer := secrets.NewSecretServer(secretClient)
 
 	registry := pods.NewPodRegistry(tenant, os.Getenv("SIDECAR_NAMESPACE"))
@@ -94,18 +94,20 @@ func main() {
 		log.Info("Listening on port " + port)
 		errs <- grpcServer.Serve(lis)
 	}()
+
 	go func() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/auth", authHandler.GetToken).Methods("POST")
 		http.Handle("/", router)
 		if _, err := os.Stat(serverTokenCert); err != nil {
-			log.Info("Auth Listening on port over TCP" + authport)
+			log.Info("Auth Listening on port over TCP:" + authport)
 			errs <- http.ListenAndServe(authport, nil)
 			os.Exit(1)
 		}
-		log.Info("Auth Listening on port TLS" + authport)
+		log.Info("Auth Listening on port TLS:" + authport)
 		errs <- http.ListenAndServeTLS(":443", serverTokenCert, serverTokenKey, nil)
 	}()
+
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)

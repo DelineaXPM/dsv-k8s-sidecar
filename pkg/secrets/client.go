@@ -90,7 +90,7 @@ type secretClient struct {
 }
 
 func CreateSecretClient(tenant, id, secret, authType string) SecretClient {
-	baseUrl := util.EnvString("THY_API_URL", "https://%s.qabambe.com/v1")
+	baseUrl := util.EnvString("DSV_API_URL", "https://%s.qabambe.com/v1")
 	baseAuthUrl := baseUrl + "/token"
 	baseSecretUrl := baseUrl + "/secrets/%s"
 	initiateCertAuthUrl := baseUrl + "/certificate/auth"

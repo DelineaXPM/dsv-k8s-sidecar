@@ -10,7 +10,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 go test ./...
 RUN GO111MODULE=on CGO_ENABLED=0 go build -ldflags "$LD_FLAGS" cmd/client/main.go
 
 FROM busybox:latest
-LABEL maintainer="thycotic.com"
+LABEL maintainer="delinea.com"
 ENV CONTROLLER_SERVICE="localhost:3000"
 ENV CONFIG_DIR="/var/secret/"
 ENV REFRESH_TIME="15m"

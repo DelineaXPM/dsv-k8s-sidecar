@@ -17,11 +17,11 @@ import (
 
 var (
 	configDir         = util.EnvString("CONFIG_DIR", "/var/secrets/")
-	SecretFile        = configDir + util.EnvString("SECRET_FILE", "thy.json")
+	SecretFile        = configDir + util.EnvString("SECRET_FILE", "dsv.json")
 	refreshTimeString = util.EnvString("REFRESH_TIME", "15m")
 )
 
-const SecretEnvName = "THY_SECRETS"
+const SecretEnvName = "DSV_SECRETS"
 
 type EnvironmentAgent interface {
 	Run() <-chan error

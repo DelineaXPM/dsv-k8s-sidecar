@@ -7,7 +7,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 go test ./...
 RUN GO111MODULE=on CGO_ENABLED=0 go build -ldflags "$LD_FLAGS" cmd/controller/main.go
 
 FROM busybox:latest
-LABEL maintainer="thycotic.com"
+LABEL maintainer="delinea.com"
 ENV PORT 3000
 EXPOSE 3000
 ENV TENANT=""

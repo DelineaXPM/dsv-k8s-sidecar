@@ -4,9 +4,9 @@ metadata:
   namespace: default
   name: dsv-service-pod-reader-binding
 rules:
-  - apiGroups: [''] # "" indicates the core API group
-    resources: ['pods']
-    verbs: ['get', 'watch', 'list']
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -34,7 +34,7 @@ metadata:
   name: broker-configmap
 data:
   REFRESH_TIME: 5m
-  THY_API_URL: https://%s.secretsvaultcloud.com/v1
+  DSV_API_URL: https://%s.secretsvaultcloud.com/v1
   TENANT: yourtenantname
   CLIENT_ID: your client ID
   CLIENT_SECRET: your client secret
@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
         - name: dsv-broker
-          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-controller:latest
+          image: <image>
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: secretkey
@@ -73,11 +73,11 @@ spec:
                 configMapKeyRef:
                   name: broker-configmap
                   key: REFRESH_TIME
-            - name: THY_API_URL
+            - name: DSV_API_URL
               valueFrom:
                 configMapKeyRef:
                   name: broker-configmap
-                  key: THY_API_URL
+                  key: DSV_API_URL
             - name: TENANT
               valueFrom:
                 configMapKeyRef:
