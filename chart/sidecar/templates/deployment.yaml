@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dsv.fullname" . }}
+  labels:
+    {{- include "dsv.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "dsv.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "dsv.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      # this is user's container
+        - name: example
+          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-example
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: client-volume
+              mountPath: /var/secret/
+        {{- if .Values.sidecarimage }}
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.sidecarimage.repository }}:{{ .Values.sidecarimage.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.sidecarimage.pullPolicy }}
+          env:
+            - name: REFRESH_TIME
+              value: {{ .Values.env.refreshTime }}
+            - name: DSV_SECRETS
+              value: {{ .Values.env.secrets }}
+            - name: LOG_LEVEL
+              value: {{ .Values.env.logLevel }}
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_SERVICEACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+                  # Required if broker is in different namespace
+            # - name: BROKER_NAMESPACE
+            #   value: {{ .Values.env.brokerNamespace }}
+         {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: client-volume
+              mountPath: /var/secret/
+              readOnly: false
+    
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      volumes:
+        - name: client-volume
+          emptyDir: {}

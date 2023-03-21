@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dsv.fullname" . }}-broker
+  labels:
+    {{- include "dsv.labels" . | nindent 4 }}
+spec:
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.brokergrpc.port }}
+      targetPort: {{ .Values.service.brokergrpc.targetPort }}
+      name: tcp
+ 
+  selector:
+    {{- include "dsv.selectorLabels" . | nindent 4 }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dsv.fullname" . }}-broker-auth
+  labels:
+    {{- include "dsv.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.service.brokerauth.tcpport }}
+      protocol: TCP
+      targetPort: {{ .Values.service.brokerauth.tcptargetPort }}
+      name: http
+    - port: {{ .Values.service.brokerauth.tlsport }}
+      protocol: TCP
+      targetPort: {{ .Values.service.brokerauth.tlstargetPort }}
+      name: https  
+  selector:
+    {{- include "dsv.selectorLabels" . | nindent 4 }}

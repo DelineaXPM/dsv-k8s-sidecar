@@ -1,3 +1,0 @@
-FROM scratch
-ENTRYPOINT ["/dsv-repo-template"]
-COPY dsv-repo-template /

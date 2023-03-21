@@ -13,7 +13,7 @@ before:
 builds:
   - id: dsv-controller
     binary: dsv-controller
-    main: cmd/controller/main.go
+    main: ./cmd/controller/main.go
     mod_timestamp: "{{ .CommitTimestamp }}"
     ldflags:
       - -s -w
@@ -26,7 +26,7 @@ builds:
 
   - id: dsv-client
     binary: dsv-client
-    main: cmd/client/main.go
+    main: ./cmd/client/main.go
     mod_timestamp: "{{ .CommitTimestamp }}"
     ldflags:
       - -s -w

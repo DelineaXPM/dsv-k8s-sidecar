@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+name: dsv-broker
+description: A Helm chart for the Delinea DevOps Secrets Vault (DSV) k8 sidcare broker.
+keywords:
+  - Delinea
+  - DevOps
+  - DSV
+  - secrets
+  - vault
+type: application
+version: 0.2.3
+appVersion: latest
+maintainers:
+  - name: Delinea DSV Team
