@@ -13,7 +13,7 @@ require (
 	github.com/pterm/pterm v0.12.54
 	github.com/sheldonhull/magetools v1.0.0
 	github.com/sirupsen/logrus v1.2.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	google.golang.org/grpc v1.16.0
 )
 
