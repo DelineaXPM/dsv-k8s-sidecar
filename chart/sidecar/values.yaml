@@ -5,19 +5,18 @@
 # @default - 1
 replicaCount: 1
 
+## enable for user's service image
+# image:
+#   repository:
+#   pullPolicy: Always
+#   # -- Overrides the image tag whose default is the chart appVersion.
+#   tag:
 
-## User's service image 
-image:
-  repository: 
-  pullPolicy: Always
-  # -- Overrides the image tag whose default is the chart appVersion.
-  tag: ''
+nameOverride: ""
+fullnameOverride: ""
 
-nameOverride: ''
-fullnameOverride: ''
-
-podAnnotations: 
-    dsv: mal
+podAnnotations:
+  dsv: mal
 
 podSecurityContext:
   {}
@@ -28,7 +27,6 @@ securityContext:
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
 
 resources: {}
 # limits:
@@ -41,9 +39,10 @@ resources: {}
 env:
   refreshTime: 5s
   secrets: resources/us-east-1/server1
-  logLevel: debug
-   # Required if broker is in different namespace
-  brokerNamespace: ''
+  logLevel:
+    debug
+    # Required if broker is in different namespace
+  brokerNamespace: ""
 
 sidecarimage:
   repository: dsv-k8s-client
