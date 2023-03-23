@@ -25,11 +25,11 @@ spec:
       containers:
       # this is user's container
         - name: example
-          image: 661058921700.dkr.ecr.us-east-1.amazonaws.com/bambe-example
+          image: bambe-example
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: client-volume
-              mountPath: /var/secret/
+              mountPath: /tmp/secret/
         {{- if .Values.sidecarimage }}
         - name: {{ .Chart.Name }}
           image: {{ .Values.sidecarimage.repository }}:{{ .Values.sidecarimage.tag | default .Chart.AppVersion }}
@@ -57,15 +57,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.serviceAccountName
-                  # Required if broker is in different namespace
-            # - name: BROKER_NAMESPACE
-            #   value: {{ .Values.env.brokerNamespace }}
+            - name: BROKER_NAMESPACE
+              value: {{ .Values.env.brokerNamespace }}
          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: client-volume
-              mountPath: /var/secret/
+              mountPath: /tmp/secret/
               readOnly: false
     
       securityContext:

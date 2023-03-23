@@ -1,5 +1,4 @@
 # https://goreleaser.com/customization/docker/?h=scrat#how-it-works
-FROM gcr.io/distroless/static:nonroot
-
+FROM  gcr.io/distroless/static:nonroot
 COPY dsv-controller /app/dsv-controller
 ENTRYPOINT [ "/app/dsv-controller" ]

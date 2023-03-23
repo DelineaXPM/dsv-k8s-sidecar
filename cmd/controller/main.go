@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -35,16 +34,14 @@ var (
 )
 
 func main() {
-	var tenant, clientID, clientSecret, port, authport, authType, logLevel string
 
-	flag.StringVar(&tenant, "tenant", "", "Required tenant name")
-	flag.StringVar(&authType, "auth-type", "", "Required authtype (client_credentials, certificate)")
-	flag.StringVar(&clientID, "client-id", "", "Client credential id Required, if authtype client_credentials")
-	flag.StringVar(&clientSecret, "client-secret", "", "Client credential proxy, Required if authtype client_credentials")
-	flag.StringVar(&port, "port", ":3000", "Port to run on")
-	flag.StringVar(&authport, "auth-port", ":8080", "Auth Port to run on")
-	flag.StringVar(&logLevel, "log-level", "error", "Log Levels: panic,fatal,error,warn,info,debug,trace")
-	flag.Parse()
+	tenant := os.Getenv("TENANT")
+	authType := os.Getenv("AUTH_TYPE")
+	clientID := os.Getenv("CLIENT_ID")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	port := util.EnvString("PORT", ":3000")
+	authport := util.EnvString("AUTH_PORT", ":8080")
+	logLevel := util.EnvString("LOG_LEVEL", "error")
 
 	level, err := log.ParseLevel(logLevel)
 	if err != nil {

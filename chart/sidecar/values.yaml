@@ -41,11 +41,11 @@ resources: {}
 env:
   refreshTime: 5s
   secrets: resources/us-east-1/server1
-  logLevel: info
+  logLevel: debug
    # Required if broker is in different namespace
   brokerNamespace: ''
 
 sidecarimage:
-  repository: docker.io/delineaxpm/dsv-k8s-client
+  repository: dsv-k8s-client
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent

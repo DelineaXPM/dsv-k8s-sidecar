@@ -6,8 +6,8 @@
 replicaCount: 1
 
 image:
-  repository: docker.io/delineaxpm/dsv-k8s-controller
-  pullPolicy: Always
+  repository: dsv-k8s-controller
+  pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
@@ -49,8 +49,8 @@ configmap:
   refreshTime: 5m
   dsvAPIURL: https://%s.devbambe.com/v1
   tenant: mal
-  clientID: fhgfghfhgh656hgfhjDSDSD5456456465456
-  clientSecret: GHFGHFGHF6GHFHGvmv7567nvhnnrhgf65
+  clientID: 718f9230-c173-48bd-8ab7-e0ab072b243f
+  clientSecret: NNxwLQHmD73j7Gy57Xww5Su_1d7HuWxCq_wDRtsL--g
   logLevel: debug
   authType: client_credentials
 

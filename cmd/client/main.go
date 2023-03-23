@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
@@ -22,20 +21,18 @@ var (
 )
 
 func main() {
-	var logLevel string
-	flag.StringVar(&logLevel, "log-level", "error", "Log Levels: panic,fatal,error,warn,info,debug,trace")
-	flag.Parse()
+
+	logLevel := os.Getenv("LOG_LEVEL")
+	name := os.Getenv("POD_NAME")
+	namespace := os.Getenv("POD_NAMESPACE")
+	podIP := os.Getenv("POD_IP")
+	brokerNamespace := os.Getenv("BROKER_NAMESPACE")
 
 	level, lErr := log.ParseLevel(logLevel)
 	if lErr != nil {
 		level = log.ErrorLevel
 	}
 	log.SetLevel(level)
-
-	name := os.Getenv("POD_NAME")
-	namespace := os.Getenv("POD_NAMESPACE")
-	podIP := os.Getenv("POD_IP")
-	brokerNamespace := os.Getenv("BROKER_NAMESPACE")
 
 	if brokerNamespace == "" {
 		brokerNamespace = namespace

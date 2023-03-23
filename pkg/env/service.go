@@ -3,7 +3,6 @@ package env
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
@@ -16,7 +15,7 @@ import (
 )
 
 var (
-	configDir         = util.EnvString("CONFIG_DIR", "/var/secrets/")
+	configDir         = util.EnvString("CONFIG_DIR", "/tmp/secret/")
 	SecretFile        = configDir + util.EnvString("SECRET_FILE", "dsv.json")
 	refreshTimeString = util.EnvString("REFRESH_TIME", "15m")
 )
@@ -148,7 +147,15 @@ func (a *environmentAgent) write(secrets chan struct {
 		return err
 	}
 
-	if err := ioutil.WriteFile(SecretFile, data, 0o777); err != nil {
+	if _, err := os.Stat(configDir); err != nil {
+		err := os.MkdirAll(configDir, os.ModePerm)
+		if err != nil {
+			log.WithField("error", err.Error()).Fatal("unable to create secrets directory")
+			return err
+		}
+	}
+
+	if err := os.WriteFile(SecretFile, data, os.ModePerm); err != nil {
 		log.WithField("error", err.Error()).Fatal("unable to write secrets file")
 		return err
 	}
