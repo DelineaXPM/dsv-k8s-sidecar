@@ -49,8 +49,8 @@ configmap:
   refreshTime: 5m
   dsvAPIURL: https://%s.devbambe.com/v1
   tenant: mal
-  clientID: 718f9230-c173-48bd-8ab7-e0ab072b243f
-  clientSecret: NNxwLQHmD73j7Gy57Xww5Su_1d7HuWxCq_wDRtsL--g
+  clientID: 3j7Gy57Xw-c173-48bd-8ab7-e0ab072b243f
+  clientSecret: NNxwLQHmD73j7Gy57Xww5Su_e0ab072b243f
   logLevel: debug
   authType: client_credentials
 

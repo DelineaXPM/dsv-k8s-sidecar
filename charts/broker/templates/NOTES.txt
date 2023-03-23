@@ -3,4 +3,4 @@
 {{- $name := (include "dsv.dnsname" .) -}}
 ✨ Deployed: {{ include "dsv.fullname" . }}
 
-📂 Namepsace: {{ .Release.Namespace }}
+📂  Namespace: {{ .Release.Namespace }}

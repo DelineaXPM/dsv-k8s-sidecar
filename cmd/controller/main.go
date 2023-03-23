@@ -97,11 +97,11 @@ func main() {
 		router.HandleFunc("/auth", authHandler.GetToken).Methods("POST")
 		http.Handle("/", router)
 		if _, err := os.Stat(serverTokenCert); err != nil {
-			log.Info("Auth Listening on port over TCP:" + authport)
+			log.Info("Auth Listening on port over TCP: " + authport)
 			errs <- http.ListenAndServe(authport, nil)
 			os.Exit(1)
 		}
-		log.Info("Auth Listening on port TLS:" + authport)
+		log.Info("Auth Listening on port TLS: " + authport)
 		errs <- http.ListenAndServeTLS(":443", serverTokenCert, serverTokenKey, nil)
 	}()
 
