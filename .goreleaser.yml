@@ -37,47 +37,47 @@ builds:
     goos: [linux]
     goarch: [amd64]
 
-# archives:
-#   - id: binary
-#     format: binary
-#   - id: replacements
-#     name_template: >-
-#       {{ .ProjectName }}_
-#       {{- title .Os }}_
-#       {{- if eq .Arch "amd64" }}x86_64
-#       {{- else if eq .Arch "386" }}i386
-#       {{- else }}{{ .Arch }}{{ end }}
-# checksum:
-#   name_template: checksums.txt
-#   algorithm: sha256
-#   disable: false
-# snapshot:
-#   name_template: "{{ incpatch .Version }}-next"
-# changelog:
-#   skip: false
-#   sort: asc
-#   use: github
-#   groups:
-#     - title: Features
-#       regexp: "^.*feat[(\\w)]*:+.*$"
-#       order: 0
-#     - title: "Fixes"
-#       regexp: "^.*fix[(\\w)]*:+.*$"
-#       order: 1
-#     - title: "CI & Chore"
-#       regexp: "^.*(fix|chore|build)[(\\w)]*:+.*$"
-#       order: 2
-#     - title: Others
-#       order: 999
-#   filters:
-#     exclude:
-#       - "^docs:"
-#       - "^test:"
-#       - "^style:"
-# sboms:
-#   - artifacts: binary
-#     documents:
-#       - "${artifact}.spdx.sbom"
+archives:
+  - id: binary
+    format: binary
+  - id: replacements
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+  disable: false
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  skip: false
+  sort: asc
+  use: github
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: "Fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: "CI & Chore"
+      regexp: "^.*(fix|chore|build)[(\\w)]*:+.*$"
+      order: 2
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^style:"
+sboms:
+  - artifacts: binary
+    documents:
+      - "${artifact}.spdx.sbom"
 dockers:
   - id: docker-publish-controller
     ids: [dsv-controller]
