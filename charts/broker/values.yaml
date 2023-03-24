@@ -11,8 +11,8 @@ image:
   # -- Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
-nameOverride: ''
-fullnameOverride: ''
+nameOverride: ""
+fullnameOverride: ""
 
 podAnnotations: {}
 
@@ -36,7 +36,6 @@ service:
     tlsport: 443
     tlstargetPort: 443
 
-
 resources: {}
 # limits:
 #   cpu: 500m
@@ -49,13 +48,13 @@ configmap:
   refreshTime: 5m
   dsvAPIURL: https://%s.devbambe.com/v1
   tenant: mal
-  clientID: 3j7Gy57Xw-c173-48bd-8ab7-e0ab072b243f
-  clientSecret: NNxwLQHmD73j7Gy57Xww5Su_e0ab072b243f
+  clientID: 718f9230-c173-48bd-8ab7-e0ab072b243f
+  clientSecret: NNNxwLQHmD73j7Gy57Xww5Su_1d7HuWxCq_wDRtsL--g
   logLevel: debug
   authType: client_credentials
 
 strategy:
   type: RollingUpdate
   rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
+    maxUnavailable: 1
+    maxSurge: 1
