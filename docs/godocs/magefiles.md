@@ -10,20 +10,22 @@ import "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles"
 
 ## Index
 
-- [Variables](#variables)
-- [func Build() error](#func-build)
-- [func BuildAll() error](#func-buildall)
-- [func Clean()](#func-clean)
-- [func Init() error](#func-init)
-- [func InstallTrunk() error](#func-installtrunk)
-- [func Release() error](#func-release)
-- [func TrunkInit() error](#func-trunkinit)
-- [type Changelog](#type-changelog)
-  - [func (Changelog) Bump() error](#func-changelog-bump)
-  - [func (Changelog) Merge() error](#func-changelog-merge)
-- [type Job](#type-job)
-  - [func (Job) Redeploy()](#func-job-redeploy)
-  - [func (Job) Setup()](#func-job-setup)
+- [magefiles](#magefiles)
+  - [Index](#index)
+  - [Variables](#variables)
+  - [func Build](#func-build)
+  - [func BuildAll](#func-buildall)
+  - [func Clean](#func-clean)
+  - [func Init](#func-init)
+  - [func InstallTrunk](#func-installtrunk)
+  - [func Release](#func-release)
+  - [func TrunkInit](#func-trunkinit)
+  - [type Changelog](#type-changelog)
+    - [func (Changelog) Bump](#func-changelog-bump)
+    - [func (Changelog) Merge](#func-changelog-merge)
+  - [type Job](#type-job)
+    - [func (Job) Redeploy](#func-job-redeploy)
+    - [func (Job) Setup](#func-job-setup)
 
 ## Variables
 

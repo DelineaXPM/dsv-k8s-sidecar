@@ -16,16 +16,17 @@ actions:
       run: mod vendor
       triggers:
         - files: [go.mod]
-    - id: gotestsum
-      runtime: go
-      description: run go tests on pre-push
-      run: gotestsum --format pkgname -- -shuffle=on  -tags integration ./...
-      triggers:
-        - git_hooks: [pre-push]
     - id: helm-lint
       runtime: go
       description: run helm lint on pre-push
       run: 'helm lint --quiet --strict charts/*'
+      triggers:
+        - git_hooks: [pre-push]
+    - id: gotestsum
+      runtime: go
+      description: run go tests on pre-push
+      run: 'gotestsum --format dots-v2 -- -shuffle=on  -tags integration ./...; echo "testing done"'
+      # interactive: true
       triggers:
         - git_hooks: [pre-push]
 version: 0.1

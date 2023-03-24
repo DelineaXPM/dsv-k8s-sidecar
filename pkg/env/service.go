@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//nolint:gochecknoglobals // already in design, leaving as ok
 var (
 	configDir         = util.EnvString("CONFIG_DIR", "/tmp/secret/")
 	SecretFile        = configDir + util.EnvString("SECRET_FILE", "dsv.json")

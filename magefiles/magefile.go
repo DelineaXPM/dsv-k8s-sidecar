@@ -148,7 +148,6 @@ func TrunkInit() error {
 
 // getVersion returns the version and path for the changefile to use for the semver and release notes.
 func getVersion() (releaseVersion, cleanPath string, err error) { //nolint:unparam // leaving as optional parameter for future release tasks.
-
 	releaseVersion, err = sh.Output("changie", "latest")
 	if err != nil {
 		pterm.Error.Printfln("changie pulling latest release note version failure: %v", err)

@@ -100,7 +100,8 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient {
 		panic("Bad Refresh Time Specified")
 	}
 
-	ticker := time.NewTicker(30 * time.Minute)      // Refresh token reset //nolint:gomnd // allow constant value
+	// Refresh token reset
+	ticker := time.NewTicker(30 * time.Minute)      //nolint:gomnd // allow constant value
 	cacheTicker := time.NewTicker(cacheRefreshTime) // Set refresh time through env?
 	q := make(chan bool)
 
