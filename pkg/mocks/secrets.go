@@ -5,8 +5,8 @@
 package mocks
 
 import (
-	secrets "github.com/DelineaXPM/dsv-k8s-sidecar/pkg/secrets"
 	context "context"
+	secrets "github.com/DelineaXPM/dsv-k8s-sidecar/pkg/secrets"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

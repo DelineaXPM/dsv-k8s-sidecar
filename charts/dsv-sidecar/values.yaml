@@ -15,11 +15,9 @@ replicaCount: 1
 nameOverride: ""
 fullnameOverride: ""
 
-podAnnotations:
-  dsv: mal
+podAnnotations: {}
 
-podSecurityContext:
-  {}
+podSecurityContext: {}
   # fsGroup: 2000
 
 securityContext:
@@ -39,8 +37,7 @@ resources: {}
 env:
   refreshTime: 5s
   secrets: resources/us-east-1/server1
-  logLevel:
-    debug
+  logLevel: debug
     # Required if broker is in different namespace
   brokerNamespace: ""
 

@@ -1,0 +1,34 @@
+---
+apiVersion: v2
+name: dsv-broker
+description: |
+  A Helm chart for the Delinea DevOps Secrets Vault (DSV) k8 sidecar broker.
+
+  Install directly with helm via:
+
+  ```shell
+  NAMESPACE='dsv'
+  CREDENTIALS_JSON_FILE='.cache/credentials.json'
+  IMAGE_REPOSITORY='docker.io/delineaxpm/dsv-k8s-broker'
+
+  helm install
+      --namespace $NAMESPACE
+      --create-namespace \
+      --set-file credentialsJson=${CREDENTIALS_JSON_FILE} \
+        --set image.repository=${IMAGE_REPOSITORY} \
+      dsv-broker ./charts/dsv-broker
+  ```
+
+icon: https://delinea.com/hubfs/Delinea/icons/product%20icons/delinea-icon-platform.svg
+keywords:
+  - Delinea
+  - DevOps
+  - DSV
+  - secrets
+  - vault
+type: application
+# WARNING: Version should be bumped by changie, not manually.
+version: 0.2.3
+appVersion: latest
+maintainers:
+  - name: Delinea DSV Team

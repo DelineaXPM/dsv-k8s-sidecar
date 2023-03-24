@@ -1,0 +1,4 @@
+kind: "\U0001F512 Security"
+body: |
+  - Add aqua policy for newer version of aqua that secures the development registries for tooling.
+time: 2023-03-24T18:16:01.198047-05:00

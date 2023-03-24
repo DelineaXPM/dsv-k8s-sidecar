@@ -27,7 +27,7 @@ var (
 )
 ```
 
-## type [EnvironmentAgent](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/pkg/env/service.go#L26-L30)
+## type [EnvironmentAgent](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/pkg/env/service.go#L25-L29)
 
 ```go
 type EnvironmentAgent interface {
@@ -37,7 +37,7 @@ type EnvironmentAgent interface {
 }
 ```
 
-### func [CreateEnvironmentAgent](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/pkg/env/service.go#L38)
+### func [CreateEnvironmentAgent](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/pkg/env/service.go#L37)
 
 ```go
 func CreateEnvironmentAgent(client secrets.DsvClient) EnvironmentAgent

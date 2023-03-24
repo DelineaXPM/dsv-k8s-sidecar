@@ -36,3 +36,9 @@ const (
 	// KubectlNamespace is the namespace used for all kubectl commands, so that they don't operate in default or other namespace by accident.
 	KubectlNamespace = "dsv"
 )
+
+const (
+
+	// ChartsDirectory is the directory where the helm charts are placed, in sub directories.
+	ChartsDirectory = "charts"
+)

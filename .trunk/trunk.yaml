@@ -8,6 +8,7 @@ actions:
     - trunk-fmt-pre-commit
     - go-mod-vendor
     - gotestsum
+    - helm-lint
   definitions:
     - id: go-mod-vendor
       description: When go mod or sum is updated, go vendoring should be run to ensure it's consistent.
@@ -21,6 +22,12 @@ actions:
       run: gotestsum --format pkgname -- -shuffle=on  -tags integration ./...
       triggers:
         - git_hooks: [pre-push]
+    - id: helm-lint
+      runtime: go
+      description: run helm lint on pre-push
+      run: 'helm lint --quiet --strict charts/*'
+      triggers:
+        - git_hooks: [pre-push]
 version: 0.1
 runtimes:
   enabled:
@@ -32,6 +39,7 @@ cli:
 
 lint:
   enabled:
+    - renovate@35.19.2
     - actionlint@1.6.23
     - git-diff-check@SYSTEM
     - gitleaks@8.16.1

@@ -44,11 +44,7 @@ The role definition at the beginning of the `broker.yml` file is required for th
 The services below are also required because the sidecar uses the name to make internal calls based on the service name.
 Customers should use a similar file to run the services in their cluster.
 
-## Getting Started
-
-> For developer workflow, see [DEVELOPER](DEVELOPER.md).
-
-In order to run the following flags are required
+In order to run the following flags are required.
 
 ### Controller
 

@@ -44,13 +44,17 @@ resources: {}
 #   cpu: 500m
 #   memory: 512Mi
 
+# NOTE: Edit the values in the .cache/ directory to change the default values
+# NOTE: This should not contain actual auth/tenant details as it's versioned in git.
+# NOTE: Run mage job:init to create copies and use the copies in the .cache to experiment.
+# NOTE: If invoking without mage, use the cli to pass the args, not code in source controlled directory.
 configmap:
   refreshTime: 5m
-  dsvAPIURL: https://%s.devbambe.com/v1
-  tenant: mal
-  clientID: 718f9230-c173-48bd-8ab7-e0ab072b243f
-  clientSecret: NNNxwLQHmD73j7Gy57Xww5Su_1d7HuWxCq_wDRtsL--g
-  logLevel: debug
+  dsvAPIURL: https://%s.secretsvaultcloud.com/v1
+  tenant:
+  clientID:
+  clientSecret:
+  logLevel: info
   authType: client_credentials
 
 strategy:
