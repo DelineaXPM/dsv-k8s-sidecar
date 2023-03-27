@@ -100,18 +100,15 @@ Examples of kubernetes files can be found in the `k8s` folder
 
 - `mage cert:generate` to create the local certs in `.cache` directory.
 
-> Pending, mage tasks for creation of broker/example. Currently if you copy these into artifacts, it will apply
+> Currently if you copy these into artifacts, it will apply.
 
-```shell
-kubectl create secret generic keys --from-file=../certs/server.key --from-file=../certs/server.crt
-```
+- For creation of the secret in development mode: `mage k8s:createsecret`
+- For a customer: `kubectl create secret generic keys --from-file=mysecretpath/server.key --from-file=mysecretpath/server.crt`
 
-Deploy the manifests
+Dev Deployment:
 
-```shell
-mage k8s:apply ./k8s/broker.yml
-mage k8s:apply ./k8s/example.yml
-```
+- Deploy the manifests individually: `mage k8s:apply ./.cache/charts/k8s/broker.yml`.
+- Deploy all locally: `mage helm:installcharts`.
 
 ## Optional Running Locally with TLS
 
@@ -124,23 +121,12 @@ Optionally we can encrypt these communications at container level.
 
 ### SideCard to Broker GRPC
 
-- Generate certificates
-- run generate-certs in the certs folder
-- create kubernetes secret
-
-```shell
-kubectl delete secret keys
-kubectl create secret generic keys --from-file=key.pem --from-file=cert.pem --from-file=ca.pem
-```
+- run `mage cert:generate` and choose `Sidecar To Broker GRPC`
+- create kubernetes secret: `mage k8s:createsecret` or manually:
 
 ### SideCard to Broker Token
 
-- run generate-certs in the certstoken folder
-- Create kubernetes secret
-
-```shell
-kubectl delete secret keys
-kubectl create secret generic keys --from-file=keytoken.pem --from-file=certtoken.pem --from-file=catoken.pem
-```
+- run `mage cert:generate` and choose `Sidecar To Broker Token`
+- create kubernetes secret: `mage k8s:createsecret` or manually:
 
 Once the above setup is done all kubernetes secret will mapped to volume and both the sidecard and broker will pick certificates up from volume.

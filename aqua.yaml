@@ -26,3 +26,5 @@ packages:
   - name: norwoodj/helm-docs
     version: v1.11.0
   - name: cloudflare/cfssl/cfssljson@v1.6.3
+  - name: tilt-dev/tilt@v0.32.0
+  - name: stern/stern@v1.24.0

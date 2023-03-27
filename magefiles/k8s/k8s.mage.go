@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 	localconstants "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 
 	"github.com/magefile/mage/mg"
@@ -100,9 +101,10 @@ func (K8s) Logs() error {
 	}
 	pterm.DefaultHeader.Println("(K8s) Logs()")
 	pterm.Warning.Printfln(
-		"if you run into log output issues, just try running:\n\n\t\tkubectl logs  --context %s --namespace %s  --selector 'dsv-filter-name in (dsv-syncer, dsv-injector)' --follow --prefix\n",
+		"if you run into log output issues, just try running:\n\n\t\tkubectl logs  --context %s --namespace %s  --selector 'dsv-filter-name in (%s)' --follow --prefix\n",
 		localconstants.KindContextName,
 		localconstants.KubectlNamespace,
+		constants.SternFilter,
 	)
 	pterm.Warning.Println(
 		"query without selector:\n\n\tstern --kubeconfig .cache/config --namespace dsv  --timestamps . ",
@@ -112,31 +114,87 @@ func (K8s) Logs() error {
 		"stern",
 		"--namespace", localconstants.KubectlNamespace,
 		"--timestamps",
-		"--selector", "dsv-filter-name in (dsv-syncer, dsv-injector)",
+		"--selector", fmt.Sprintf("dsv-filter-name in (%s)", constants.SternFilter),
 	)
+
 	return sh.RunV(
 		"stern",
 		"--namespace", localconstants.KubectlNamespace,
 		"--timestamps",
-		"--selector", "dsv-filter-name in (dsv-syncer, dsv-injector)",
+		"--selector", fmt.Sprintf("dsv-filter-name in (%s)", constants.SternFilter),
 	)
 }
 
-// Create a secret from keys.
-func (K8s) CreateSecret(manifest string) error {
+// CreateSecret 🚧 🚧 🚧 🚧  PENDING USAGE: Create a secret from keys.
+func (K8s) CreateSecret() error {
 	mtu.CheckPtermDebug()
-	pterm.DefaultHeader.Println("(K8s) Apply()")
+	pterm.DefaultHeader.Println("(K8s) CreateSecret()")
+
+	pterm.DefaultSection.Println("Create Secret Sidecar To Broker GRPC")
+	selection, err := pterm.DefaultInteractiveSelect.WithOptions(
+		[]string{
+			"Sidecar to Broker GRPC",
+			"Sidecar To Broker Token",
+		},
+	).Show()
+	if err != nil {
+		return err
+	}
+	switch selection {
+	case "Sidecar to Broker GRPC":
+
+		if err := sh.Run(
+			"kubectl",
+			"create",
+			"secret",
+			"generic",
+			"keys",
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
+			"--context", localconstants.KindContextName,
+			"--namespace", localconstants.KubectlNamespace,
+			"--cluster", localconstants.KindContextName,
+			"--validate=strict",
+		); err != nil {
+			pterm.Warning.Printfln("if secret already exists, try running: mage k8s:deletesecretkey first")
+			return err
+
+		}
+	case "Sidecar To Broker Token":
+
+		pterm.DefaultSection.Println("Create Secret SideCard to Broker Token")
+		if err := sh.Run(
+			"kubectl",
+			"create",
+			"secret",
+			"generic",
+			"keys",
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
+			"--context", localconstants.KindContextName,
+			"--namespace", localconstants.KubectlNamespace,
+			"--cluster", localconstants.KindContextName,
+			"--validate=strict",
+		); err != nil {
+			pterm.Warning.Printfln("if secret already exists, try running: mage k8s:deletesecretkey first")
+			return err
+		}
+	}
+
+	return nil
+}
+
+// DeleteSecretKey removes the generic secret in the local context so it can be recreated.
+func (K8s) DeleteSecretKey() error {
 	return sh.Run(
 		"kubectl",
-		"create",
-		"generic",
+		"delete",
+		"secret",
 		"keys",
-		"--from-file=", filepath.Join(localconstants.CacheDirectory, "server.key"),
-		"--from-file=", filepath.Join(localconstants.CacheDirectory, "server.crt"),
 		"--context", localconstants.KindContextName,
 		"--namespace", localconstants.KubectlNamespace,
 		"--cluster", localconstants.KindContextName,
-		"--wait=true",
-		"--overwrite=true",
 	)
 }

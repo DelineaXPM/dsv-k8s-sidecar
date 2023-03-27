@@ -14,6 +14,7 @@ import (
 
 	"github.com/bitfield/script"
 	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
 	"github.com/sheldonhull/magetools/pkg/magetoolsutils"
 )
@@ -27,72 +28,132 @@ func (Cert) Generate() error {
 	pterm.DefaultHeader.Println("Generate()")
 	duration := time.Second * 1
 
-	_ = os.MkdirAll(constants.CacheDirectory, constants.PermissionUserReadWriteExecute)
-	defer func() {
-		for _, item := range []string{
-			"ca-key.pem",
-			"ca.csr",
-			"ca.pem",
-			"auth-key.pem",
-			"auth.csr",
-			"auth.pem",
-		} {
-			targetFile := filepath.Join(constants.CacheDirectory, item)
-			if err := os.Rename(item, targetFile); err != nil {
-				pterm.Warning.Printfln("unable to rename file: %v", item)
-			}
-			pterm.Info.Printfln("mv %s to %s", item, targetFile)
-		}
+	type renameFile struct {
+		OriginalName string
+		NewName      string
+	}
 
-		pterm.Success.Printfln("generated files moved to: %s", constants.CacheDirectory)
-		pterm.Success.Println("(Cert) Generate()")
-	}()
+	_ = os.MkdirAll(constants.CacheCertDirectory, constants.PermissionUserReadWriteExecute)
+	// defer func() {
+	// 	for _, item := range []string{
+	// 		"ca-key.pem",
+	// 		"ca.csr",
+	// 		"ca.pem",
+	// 		"auth-key.pem",
+	// 		"auth.csr",
+	// 		"auth.pem",
+	// 	} {
+	// 		targetFile := filepath.Join(constants.CacheDirectory, item)
+	// 		if err := os.Rename(item, targetFile); err != nil {
+	// 			pterm.Warning.Printfln("unable to rename file: %v", item)
+	// 		}
+	// 		pterm.Info.Printfln("mv %s to %s", item, targetFile)
+	// 	}
+
+	// 	pterm.Success.Printfln("generated files moved to: %s", constants.CacheDirectory)
+	// 	pterm.Success.Println("(Cert) Generate()")
+	// }()
 
 	_, _, err := verifyBinaries()
 	if err != nil {
 		return err
 	}
-	// #############
-	// # TOKEN #
-	// #############.
-	_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -initca config/cert/ca-csr.json").WriteFile(".cache/outcert.json") // Exec("cfssljson -bare ca").Stdout().
+	pterm.Info.Println("choose which cert to generate")
+	selection, err := pterm.DefaultInteractiveSelect.WithOptions(
+		[]string{
+			"Sidecar to Broker GRPC",
+			"Sidecar To Broker Token",
+		},
+	).Show()
 	if err != nil {
-		pterm.Error.Printfln("issue running cfssl -bare ca: %v", err)
 		return err
 	}
-	_, err = script.Exec("cfssljson -log_dir=.artifacts -f .cache/outcert.json -bare ca").Stdout()
-	if err != nil {
-		pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
-		return err
+	switch selection {
+	case "Sidecar to Broker GRPC":
+		// #############
+		// # TOKEN #
+		// #############.
+		_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -initca config/cert/ca-csr.json").WriteFile(".cache/outcert.json") // Exec("cfssljson -bare ca").Stdout().
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssl -bare ca: %v", err)
+			return err
+		}
+
+		_, err = script.Exec("cfssljson -log_dir=.artifacts -f .cache/outcert.json -bare ca").Stdout()
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
+			return err
+		}
+
+		time.Sleep(duration)
+		_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -ca=ca.pem -ca-key=ca-key.pem -config=config/cert/ca-config.json -profile=server config/cert/auth-csr.json").Exec("cfssljson -bare auth").Stdout()
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
+			return err
+		}
+		renameListCerts := []renameFile{
+			{OriginalName: "auth-key.pem", NewName: fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC)},
+			{OriginalName: "auth.csr", NewName: fmt.Sprintf("%s-auth.csr", constants.PrefixSidecarToBrokerGRPC)},
+			{OriginalName: "auth.pem", NewName: fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC)},
+			{OriginalName: "ca-key.pem", NewName: fmt.Sprintf("%s-ca-key.pem", constants.PrefixSidecarToBrokerGRPC)},
+			{OriginalName: "ca.csr", NewName: fmt.Sprintf("%s-ca.csr", constants.PrefixSidecarToBrokerGRPC)},
+			{OriginalName: "ca.pem", NewName: fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC)},
+		}
+		for _, item := range renameListCerts {
+			targetFile := filepath.Join(constants.CacheCertDirectory, item.NewName)
+			if err := os.Rename(item.OriginalName, targetFile); err != nil {
+				pterm.Warning.Printfln("unable to move original: %s to new: %s", item.OriginalName, item.NewName)
+			}
+			pterm.Info.Printfln("mv %s to %s", item.OriginalName, targetFile)
+			if err := sh.Rm(item.OriginalName); err != nil {
+				pterm.Error.Printfln("unable to remove original, terminating early to avoid duplicate file confusion: %s", item.OriginalName)
+				return err
+			}
+		}
+
+	case "Sidecar To Broker Token":
+
+		// #############
+		// # CERTTOKEN #
+		// #############.
+		_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -initca config/certtoken/ca-csr.json").WriteFile(".cache/outcerttoken.json") // Exec("cfssljson -bare ca").Stdout().
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssl -bare ca: %v", err)
+			return err
+		}
+		_, err = script.Exec("cfssljson -log_dir=.artifacts -f .cache/outcerttoken.json -bare ca").Stdout()
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
+			return err
+		}
+
+		time.Sleep(duration)
+		_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -ca=ca.pem -ca-key=ca-key.pem -config=config/certtoken/ca-config.json -profile=server config/certtoken/auth-csr.json").Exec("cfssljson -bare auth").Stdout()
+		if err != nil {
+			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
+			return err
+		}
+		renameListToken := []renameFile{
+			{OriginalName: "auth-key.pem", NewName: fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerToken)},
+			{OriginalName: "auth.csr", NewName: fmt.Sprintf("%s-auth.csr", constants.PrefixSidecarToBrokerToken)},
+			{OriginalName: "auth.pem", NewName: fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerToken)},
+			{OriginalName: "ca-key.pem", NewName: fmt.Sprintf("%s-ca-key.pem", constants.PrefixSidecarToBrokerToken)},
+			{OriginalName: "ca.csr", NewName: fmt.Sprintf("%s-ca.csr", constants.PrefixSidecarToBrokerToken)},
+			{OriginalName: "ca.pem", NewName: fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerToken)},
+		}
+		for _, item := range renameListToken {
+			targetFile := filepath.Join(constants.CacheCertDirectory, item.NewName)
+			if err := os.Rename(item.OriginalName, targetFile); err != nil {
+				pterm.Warning.Printfln("unable to move original: %s to new: %s", item.OriginalName, item.NewName)
+			}
+			pterm.Info.Printfln("mv %s to %s", item.OriginalName, targetFile)
+			if err := sh.Rm(item.OriginalName); err != nil {
+				pterm.Error.Printfln("unable to remove original, terminating early to avoid duplicate file confusion: %s", item.OriginalName)
+				return err
+			}
+		}
 	}
 
-	time.Sleep(duration)
-	_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -ca=ca.pem -ca-key=ca-key.pem -config=config/cert/ca-config.json -profile=server config/cert/auth-csr.json").Exec("cfssljson -bare auth").Stdout()
-	if err != nil {
-		pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
-		return err
-	}
-
-	// #############
-	// # CERTTOKEN #
-	// #############.
-	_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -initca config/certtoken/ca-csr.json").WriteFile(".cache/outcerttoken.json") // Exec("cfssljson -bare ca").Stdout().
-	if err != nil {
-		pterm.Error.Printfln("issue running cfssl -bare ca: %v", err)
-		return err
-	}
-	_, err = script.Exec("cfssljson -log_dir=.artifacts -f .cache/outcerttoken.json -bare ca").Stdout()
-	if err != nil {
-		pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
-		return err
-	}
-
-	time.Sleep(duration)
-	_, err = script.Exec("cfssl -log_dir=.artifacts gencert -loglevel=5 -ca=ca.pem -ca-key=ca-key.pem -config=config/certtoken/ca-config.json -profile=server config/certtoken/auth-csr.json").Exec("cfssljson -bare auth").Stdout()
-	if err != nil {
-		pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
-		return err
-	}
 	return nil
 }
 
