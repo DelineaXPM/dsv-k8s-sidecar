@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 	"github.com/magefile/mage/mg"
@@ -62,7 +63,7 @@ func (Helm) InstallCharts() error {
 				"--atomic",  // if set, the installation process deletes the installation on failure. The --wait flag will be set automatically if --atomic is used
 				"--replace", // re-use the given name, only if that name is a deleted release which remains in the history. This is unsafe in production
 				"--wait",    // waits, those atomic already runs this
-				"--values", filepath.Join(chart.ChartPath, "values.yaml"),
+				"--values", filepath.Join(constants.CacheChartsDirectory, chart.ChartPath, "values.yaml"),
 				"--timeout", constants.HelmTimeout,
 				"--force",             // force resource updates through a replacement strategy
 				"--wait-for-jobs",     // will wait until all Jobs have been completed before marking the release as successful
@@ -72,5 +73,56 @@ func (Helm) InstallCharts() error {
 			return err
 		}
 	}
+	return nil
+}
+
+// ⚙️ Init sets up the required files to allow for local editing/overriding from CacheDirectory.
+//
+// It does this by using the HelmChartlist and copying the default values.yaml to the CacheDirectory.
+func (Helm) Init() error {
+	pterm.DefaultSection.Println("(Helm) Init()")
+	for _, chart := range constants.HelmChartsList {
+		pterm.DefaultSection.Printfln(
+			"Copy values.yaml for: %s to CacheDirectory: %s",
+			chart.ReleaseName,
+			constants.CacheChartsDirectory,
+		)
+
+		// FileToCopy is the helm Values file without the parent directory path.
+		fileToCopyList := strings.Split(chart.Values, string(filepath.Separator))
+		pterm.Debug.Printfln("[getValuesYaml] fileToCopyList: %+v", fileToCopyList)
+		if len(fileToCopyList) <= 1 {
+			return fmt.Errorf("failed to get file name from %+v", fileToCopyList)
+		}
+		ln := filepath.Join(fileToCopyList[1:]...)
+		fileToCopy := filepath.Join(constants.ChartsDirectory, ln)
+
+		// Since the file doesn't exist let's read the contents and update an equivalent in the CacheDirectory for local editing and tweaking.
+		targetFile := filepath.Join(constants.CacheChartsDirectory, ln)
+		targetDir, _ := filepath.Split(filepath.Join(constants.CacheChartsDirectory, ln))
+		if _, err := os.Stat(targetFile); !os.IsNotExist(err) {
+			pterm.Info.Printfln("file: %s already exists in target, bypassing", targetFile)
+			continue
+		}
+		// CopyPlaceholderValueshelmValuesFile copies the placeholder values.yaml file to the cache directory to get started with customizing local tests.
+		pterm.Info.Printfln(
+			"Init() %s file doesn't exist, so copying original helm values.yaml file from charts directory to bootstrap this",
+			fileToCopy,
+		)
+
+		// Create an equivalent path in the .cache directory to work with.
+		if err := os.MkdirAll(targetDir, constants.PermissionUserReadWriteExecute); err != nil {
+			pterm.Error.Printfln("unable to create the required directory: %v", err)
+		}
+		data, err := os.ReadFile(fileToCopy)
+		pterm.Info.Printfln("copying: %s to targetDir: %s", fileToCopy, targetDir)
+		if err != nil {
+			pterm.Error.Printfln("unable to read the file: %v", err)
+		}
+		if err := os.WriteFile(targetFile, data, constants.PermissionUserReadWriteExecute); err != nil {
+			pterm.Error.Printfln("unable to write the file: %v", err)
+		}
+	}
+	pterm.Success.Printfln("(Helm) Init()")
 	return nil
 }

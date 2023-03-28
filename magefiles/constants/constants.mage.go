@@ -27,6 +27,9 @@ const (
 
 	// CacheCertDirectory is the directory where the cached certs are copied to.
 	CacheCertDirectory = ".cache/certs"
+
+	// CacheChartsDirectory is the directory where the cached helm values file is copied to.
+	CacheChartsDirectory = ".cache/charts"
 )
 
 const (
