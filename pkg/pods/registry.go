@@ -53,7 +53,6 @@ func NewPodRegistry(tenant, namespace string) PodRegistry {
 	}
 
 	go func(tenant string, watcher *k8s.Watcher, create, update, remove chan<- *corev1.Pod) {
-		//TODO: this uses github.com/ericchiang/k8s/apis/core/v1 API's which aleady has archived. Refactor to use official Kubernetes' Go client
 		for {
 			p := new(corev1.Pod)
 			eventType, err := watcher.Next(p)

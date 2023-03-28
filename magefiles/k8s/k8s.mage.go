@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
-	localconstants "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -25,19 +24,19 @@ func (K8s) Init() error {
 	mtu.CheckPtermDebug()
 	pterm.DefaultHeader.Println("(K8s) Init()")
 	// Create the cache directory if it doesn't exist.
-	if _, err := os.Stat(localconstants.CacheManifestDirectory); os.IsNotExist(err) {
-		if err := os.MkdirAll(localconstants.CacheManifestDirectory, localconstants.PermissionUserReadWriteExecute); err != nil {
+	if _, err := os.Stat(constants.CacheManifestDirectory); os.IsNotExist(err) {
+		if err := os.MkdirAll(constants.CacheManifestDirectory, constants.PermissionUserReadWriteExecute); err != nil {
 			return fmt.Errorf("os.MkdirAll(): %w", err)
 		}
 	}
 	// For each file in the examples directory, create a copy in the CacheManifestDirectory.
-	de, err := os.ReadDir(localconstants.ExamplesDirectory)
+	de, err := os.ReadDir(constants.ExamplesDirectory)
 	if err != nil {
 		return err
 	}
 	for _, file := range de {
-		originalFile := filepath.Join(localconstants.ExamplesDirectory, file.Name())
-		targetFile := filepath.Join(localconstants.CacheManifestDirectory, file.Name())
+		originalFile := filepath.Join(constants.ExamplesDirectory, file.Name())
+		targetFile := filepath.Join(constants.CacheManifestDirectory, file.Name())
 		// If the file doesn't exist in the manifest directory, read it and copy it to the manifest directory.
 		if _, err := os.Stat(targetFile); os.IsNotExist(err) {
 			// Read the original file.
@@ -46,7 +45,7 @@ func (K8s) Init() error {
 				return fmt.Errorf("unable to read original file: %s, os.ReadFile(): %w", original, err)
 			}
 			// Create the new file from the contents of the original file.
-			if err := os.WriteFile(targetFile, original, localconstants.PermissionUserReadWriteExecute); err != nil {
+			if err := os.WriteFile(targetFile, original, constants.PermissionUserReadWriteExecute); err != nil {
 				return fmt.Errorf("unable to write new file: %s, os.WriteFile(): %w", targetFile, err)
 			}
 			pterm.Success.Printfln("copied starter example (edit and apply to use): %s", targetFile)
@@ -63,10 +62,10 @@ func (K8s) Apply(manifest string) error {
 	return sh.Run(
 		"kubectl",
 		"apply",
-		"--kubeconfig", localconstants.Kubeconfig,
-		"--context", localconstants.KindContextName,
-		"--namespace", localconstants.KubectlNamespace,
-		"--cluster", localconstants.KindContextName,
+		"--kubeconfig", constants.Kubeconfig,
+		"--context", constants.KindContextName,
+		"--namespace", constants.KubectlNamespace,
+		"--cluster", constants.KindContextName,
 		"--wait=true",
 		"--overwrite=true",
 		"-f", manifest,
@@ -80,10 +79,10 @@ func (K8s) Delete(manifest string) {
 	if err := sh.Run(
 		"kubectl",
 		"delete",
-		"--kubeconfig", localconstants.Kubeconfig,
-		"--context", localconstants.KindContextName,
-		"--namespace", localconstants.KubectlNamespace,
-		"--cluster", localconstants.KindContextName,
+		"--kubeconfig", constants.Kubeconfig,
+		"--context", constants.KindContextName,
+		"--namespace", constants.KubectlNamespace,
+		"--cluster", constants.KindContextName,
 		"-f", manifest,
 	); err != nil {
 		pterm.Warning.Printfln("(K8s) Delete() error [non-terminating]: %s", err)
@@ -102,8 +101,8 @@ func (K8s) Logs() error {
 	pterm.DefaultHeader.Println("(K8s) Logs()")
 	pterm.Warning.Printfln(
 		"if you run into log output issues, just try running:\n\n\t\tkubectl logs  --context %s --namespace %s  --selector 'dsv-filter-name in (%s)' --follow --prefix\n",
-		localconstants.KindContextName,
-		localconstants.KubectlNamespace,
+		constants.KindContextName,
+		constants.KubectlNamespace,
 		constants.SternFilter,
 	)
 	pterm.Warning.Println(
@@ -112,14 +111,14 @@ func (K8s) Logs() error {
 	pterm.Debug.Println(
 		"Manually run stern with the following:\n\n\t",
 		"stern",
-		"--namespace", localconstants.KubectlNamespace,
+		"--namespace", constants.KubectlNamespace,
 		"--timestamps",
 		"--selector", fmt.Sprintf("dsv-filter-name in (%s)", constants.SternFilter),
 	)
 
 	return sh.RunV(
 		"stern",
-		"--namespace", localconstants.KubectlNamespace,
+		"--namespace", constants.KubectlNamespace,
 		"--timestamps",
 		"--selector", fmt.Sprintf("dsv-filter-name in (%s)", constants.SternFilter),
 	)
@@ -149,12 +148,12 @@ func (K8s) CreateSecret() error {
 			"secret",
 			"generic",
 			"keys",
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
-			"--context", localconstants.KindContextName,
-			"--namespace", localconstants.KubectlNamespace,
-			"--cluster", localconstants.KindContextName,
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
+			"--context", constants.KindContextName,
+			"--namespace", constants.KubectlNamespace,
+			"--cluster", constants.KindContextName,
 			"--validate=strict",
 		); err != nil {
 			pterm.Warning.Printfln("if secret already exists, try running: mage k8s:deletesecretkey first")
@@ -169,12 +168,12 @@ func (K8s) CreateSecret() error {
 			"secret",
 			"generic",
 			"keys",
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
-			fmt.Sprintf("--from-file=%s", filepath.Join(localconstants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
-			"--context", localconstants.KindContextName,
-			"--namespace", localconstants.KubectlNamespace,
-			"--cluster", localconstants.KindContextName,
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC))),
+			fmt.Sprintf("--from-file=%s", filepath.Join(constants.CacheCertDirectory, fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC))),
+			"--context", constants.KindContextName,
+			"--namespace", constants.KubectlNamespace,
+			"--cluster", constants.KindContextName,
 			"--validate=strict",
 		); err != nil {
 			pterm.Warning.Printfln("if secret already exists, try running: mage k8s:deletesecretkey first")
@@ -192,8 +191,8 @@ func (K8s) DeleteSecretKey() error {
 		"delete",
 		"secret",
 		"keys",
-		"--context", localconstants.KindContextName,
-		"--namespace", localconstants.KubectlNamespace,
-		"--cluster", localconstants.KindContextName,
+		"--context", constants.KindContextName,
+		"--namespace", constants.KubectlNamespace,
+		"--cluster", constants.KindContextName,
 	)
 }

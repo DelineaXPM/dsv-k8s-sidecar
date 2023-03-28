@@ -16,9 +16,7 @@ import (
 
 const controllerServiceName = "dsv-broker.%s:80"
 
-var (
-	keyDir = util.EnvString("KEY_DIR", "/tmp/keys/")
-)
+var keyDir = util.EnvString("KEY_DIR", "/tmp/keys/") //nolint:gochecknoglobals // no other possibility
 
 func main() {
 

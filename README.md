@@ -119,14 +119,22 @@ There are two communication between sidecard and broker
 
 Optionally we can encrypt these communications at container level.
 
+## Generate self signed certificate
+
+- run `mage cert:generate` and choose `Sidecar To Broker`: This will generate certs and keys in .cache folder.
+- create kubernetes secret: `mage k8s:createsecret` or manually: kubectl create secret generic keys --from-file=key.pem --from-file=cert.pem --from-file=ca.pem
+
 ### SideCard to Broker GRPC
 
-- run `mage cert:generate` and choose `Sidecar To Broker GRPC`
-- create kubernetes secret: `mage k8s:createsecret` or manually:
+Add above k8 secret as volume in Broker's k8 deployment and add the name of cert and private key name env in k8 values.yml.
+`KEY_DIR` => the volume directory.
+`SERVER_CRT` => this will be certs.
+`SERVER_KEY` => this will be private key.
 
 ### SideCard to Broker Token
 
-- run `mage cert:generate` and choose `Sidecar To Broker Token`
-- create kubernetes secret: `mage k8s:createsecret` or manually:
+Add above k8 secret as volume in sidecar's k8 deployment and add the name of cert env in k8 values.yml.
+`KEY_DIR` => the volume directory.
+`SERVER_CRT` => this will be certs.
 
 Once the above setup is done all kubernetes secret will mapped to volume and both the sidecard and broker will pick certificates up from volume.
