@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
-	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
 	"github.com/bitfield/script"
 
 	//mage:import
@@ -20,9 +19,7 @@ import (
 	//mage:import
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
 	//mage:import
-	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
-	// This breaks the app because the new version of google.golang.org/grpc is not compatible with the old version of grpc v1.16.0.
-	// "github.com/DelineaXPM/dsv-k8s/v2/magefiles/helm".
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
