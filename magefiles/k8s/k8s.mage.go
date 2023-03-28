@@ -159,7 +159,6 @@ func (K8s) CreateSecret() error {
 		); err != nil {
 			pterm.Warning.Printfln("if secret already exists, try running: mage k8s:deletesecretkey first")
 			return err
-
 		}
 	case "Sidecar To Broker Token":
 
