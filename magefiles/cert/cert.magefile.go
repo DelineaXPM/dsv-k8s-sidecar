@@ -22,16 +22,16 @@ import (
 // Cert contains tasks to generate cert.
 type Cert mg.Namespace
 
+type renameFile struct {
+	OriginalName string
+	NewName      string
+}
+
 // Generate certs using cffsl (cloudflare toolkit). Requires aqua to have installed already.
 func (Cert) Generate() error {
 	magetoolsutils.CheckPtermDebug()
 	pterm.DefaultHeader.Println("Generate()")
 	duration := time.Second * 1
-
-	type renameFile struct {
-		OriginalName string
-		NewName      string
-	}
 
 	_ = os.MkdirAll(constants.CacheCertDirectory, constants.PermissionUserReadWriteExecute)
 	// defer func() {
@@ -91,24 +91,9 @@ func (Cert) Generate() error {
 			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
 			return err
 		}
-		renameListCerts := []renameFile{
-			{OriginalName: "auth-key.pem", NewName: fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerGRPC)},
-			{OriginalName: "auth.csr", NewName: fmt.Sprintf("%s-auth.csr", constants.PrefixSidecarToBrokerGRPC)},
-			{OriginalName: "auth.pem", NewName: fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerGRPC)},
-			{OriginalName: "ca-key.pem", NewName: fmt.Sprintf("%s-ca-key.pem", constants.PrefixSidecarToBrokerGRPC)},
-			{OriginalName: "ca.csr", NewName: fmt.Sprintf("%s-ca.csr", constants.PrefixSidecarToBrokerGRPC)},
-			{OriginalName: "ca.pem", NewName: fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerGRPC)},
-		}
-		for _, item := range renameListCerts {
-			targetFile := filepath.Join(constants.CacheCertDirectory, item.NewName)
-			if err := os.Rename(item.OriginalName, targetFile); err != nil {
-				pterm.Warning.Printfln("unable to move original: %s to new: %s", item.OriginalName, item.NewName)
-			}
-			pterm.Info.Printfln("mv %s to %s", item.OriginalName, targetFile)
-			if err := sh.Rm(item.OriginalName); err != nil {
-				pterm.Error.Printfln("unable to remove original, terminating early to avoid duplicate file confusion: %s", item.OriginalName)
-				return err
-			}
+		if err := moveFiles(constants.PrefixSidecarToBrokerGRPC); err != nil {
+			pterm.Error.Printfln("terminating, due to failure in moving files: %v", err)
+			return err
 		}
 
 	case "Sidecar To Broker Token":
@@ -133,27 +118,36 @@ func (Cert) Generate() error {
 			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
 			return err
 		}
-		renameListToken := []renameFile{
-			{OriginalName: "auth-key.pem", NewName: fmt.Sprintf("%s-auth-key.pem", constants.PrefixSidecarToBrokerToken)},
-			{OriginalName: "auth.csr", NewName: fmt.Sprintf("%s-auth.csr", constants.PrefixSidecarToBrokerToken)},
-			{OriginalName: "auth.pem", NewName: fmt.Sprintf("%s-auth.pem", constants.PrefixSidecarToBrokerToken)},
-			{OriginalName: "ca-key.pem", NewName: fmt.Sprintf("%s-ca-key.pem", constants.PrefixSidecarToBrokerToken)},
-			{OriginalName: "ca.csr", NewName: fmt.Sprintf("%s-ca.csr", constants.PrefixSidecarToBrokerToken)},
-			{OriginalName: "ca.pem", NewName: fmt.Sprintf("%s-ca.pem", constants.PrefixSidecarToBrokerToken)},
-		}
-		for _, item := range renameListToken {
-			targetFile := filepath.Join(constants.CacheCertDirectory, item.NewName)
-			if err := os.Rename(item.OriginalName, targetFile); err != nil {
-				pterm.Warning.Printfln("unable to move original: %s to new: %s", item.OriginalName, item.NewName)
-			}
-			pterm.Info.Printfln("mv %s to %s", item.OriginalName, targetFile)
-			if err := sh.Rm(item.OriginalName); err != nil {
-				pterm.Error.Printfln("unable to remove original, terminating early to avoid duplicate file confusion: %s", item.OriginalName)
-				return err
-			}
+		if err := moveFiles(constants.PrefixSidecarToBrokerToken); err != nil {
+			pterm.Error.Printfln("terminating, due to failure in moving files: %v", err)
+			return err
 		}
 	}
 
+	return nil
+}
+
+// moveFiles moves the files to the cert cache directory, and requires a prefix so it's clear which config was used.
+func moveFiles(prefix string) error {
+	renameListCerts := []renameFile{
+		{OriginalName: "auth-key.pem", NewName: fmt.Sprintf("%s-auth-key.pem", prefix)},
+		{OriginalName: "auth.csr", NewName: fmt.Sprintf("%s-auth.csr", prefix)},
+		{OriginalName: "auth.pem", NewName: fmt.Sprintf("%s-auth.pem", prefix)},
+		{OriginalName: "ca-key.pem", NewName: fmt.Sprintf("%s-ca-key.pem", prefix)},
+		{OriginalName: "ca.csr", NewName: fmt.Sprintf("%s-ca.csr", prefix)},
+		{OriginalName: "ca.pem", NewName: fmt.Sprintf("%s-ca.pem", prefix)},
+	}
+	for _, item := range renameListCerts {
+		targetFile := filepath.Join(constants.CacheCertDirectory, item.NewName)
+		if err := os.Rename(item.OriginalName, targetFile); err != nil {
+			pterm.Warning.Printfln("unable to move original: %s to new: %s", item.OriginalName, item.NewName)
+		}
+		pterm.Info.Printfln("mv %s to %s", item.OriginalName, targetFile)
+		if err := sh.Rm(item.OriginalName); err != nil {
+			pterm.Error.Printfln("unable to remove original, terminating early to avoid duplicate file confusion: %s", item.OriginalName)
+			return err
+		}
+	}
 	return nil
 }
 
