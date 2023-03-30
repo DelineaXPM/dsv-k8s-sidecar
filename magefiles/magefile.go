@@ -2,7 +2,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
 	"github.com/bitfield/script"
 
 	//mage:import
@@ -63,30 +63,16 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 	)
 
 	if ci.IsCI() {
-		pterm.Debug.Println("CI detected, installing remaining CI required tools")
-		pterm.DefaultSection.Println("aqua install of CI tooling")
-		if err := sh.RunV("aqua", "install", "--tags", "ci"); err != nil {
-			pterm.Error.Printfln("aqua install not successful, is the aqua installed?")
-			return fmt.Errorf("aqua install not successful, is the aqua installed? %w", err)
-		}
-		pterm.Success.Println("Init() complete")
+		pterm.Success.Println("Init() complete, exiting early per CI detected")
 		return nil
 	}
-	// These can run in parallel as different toolchains.
-	// Mg.Deps(
-	//
-	// ).
 	pterm.DefaultSection.Println("Setup Project Specific Tools")
 	if err := tooling.SilentInstallTools(toolList); err != nil {
 		return err
 	}
-
-	// if err := sh.Run("docker", "pull", "alpine:latest"); err != nil {
-	// 	return err
-	// }
-
 	mg.Deps(
 		k8s.K8s{}.Init,
+		helm.Helm{}.Init,
 	)
 
 	if runtime.GOOS == "windows" {
@@ -97,6 +83,10 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 			return err
 		}
 		mg.Deps(TrunkInit)
+
+		if _, err := exec.LookPath("direnv"); err != nil {
+			pterm.Warning.Printfln("non-terminating] direnv not detected. recommend setup and shell integration to automatically load .envrc project configuration")
+		}
 	}
 
 	// Aqua install is run in devcontainer/codespace automatically.
@@ -111,7 +101,7 @@ func Init() error { //nolint:deadcode // Not dead, it's alive.
 	return nil
 }
 
-// Clean up after yourself.
+// 🧹 Clean up after yourself.
 func Clean() {
 	pterm.Success.Println("Cleaning...")
 	for _, dir := range []string{constants.ArtifactDirectory, constants.CacheDirectory} {
