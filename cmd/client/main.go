@@ -48,13 +48,13 @@ func main() {
 		err   error
 	)
 
-	serverTokenCert := keyDir + util.EnvString("SERVER_CRT", "catoken.pem")
-	if _, err = os.Stat(serverTokenCert); err != nil {
+	serverCert := keyDir + util.EnvString("SERVER_CRT", "cert.pem")
+	if _, err = os.Stat(serverCert); err != nil {
 		log.Info("Connecting over TCP with token")
 		token, err = auth.GetToken(namespace+"/"+name, podIP, brokerNamespace)
 	} else {
 		log.Info("Connecting with TLS with token")
-		token, err = auth.GetTLsToken(namespace+"/"+name, podIP, brokerNamespace, serverTokenCert)
+		token, err = auth.GetTLsToken(namespace+"/"+name, podIP, brokerNamespace, serverCert)
 	}
 	if err != nil {
 		log.Fatalf("Unable to get token: %s", err)
@@ -80,7 +80,7 @@ func getGRPCConnection(token credentials.PerRPCCredentials, brokerNamespace stri
 		err  error
 	)
 
-	creds, err := credentials.NewClientTLSFromFile(keyDir+util.EnvString("SERVER_CRT", "ca.pem"), "")
+	creds, err := credentials.NewClientTLSFromFile(keyDir+util.EnvString("SERVER_CRT", "cert.pem"), "")
 	if err != nil {
 		log.Warn("Failed to get certificate keys: starting the server insecure: ", err.Error())
 		conn, err = grpc.Dial(url, grpc.WithInsecure(), grpc.WithPerRPCCredentials(token))

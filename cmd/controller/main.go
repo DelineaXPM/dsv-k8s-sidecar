@@ -28,9 +28,6 @@ var (
 	keyDir     = util.EnvString("KEY_DIR", "/tmp/keys/")
 	serverCert = keyDir + util.EnvString("SERVER_CRT", "cert.pem")
 	serverKey  = keyDir + util.EnvString("SERVER_KEY", "key.pem")
-
-	serverTokenCert = keyDir + util.EnvString("SERVER_CRT", "certtoken.pem")
-	serverTokenKey  = keyDir + util.EnvString("SERVER_KEY", "keytoken.pem")
 )
 
 func main() {
@@ -96,13 +93,13 @@ func main() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/auth", authHandler.GetToken).Methods("POST")
 		http.Handle("/", router)
-		if _, err := os.Stat(serverTokenCert); err != nil {
+		if _, err := os.Stat(serverCert); err != nil {
 			log.Info("Auth Listening on port over TCP: " + authport)
 			errs <- http.ListenAndServe(authport, nil)
 			os.Exit(1)
 		}
 		log.Info("Auth Listening on port TLS: " + authport)
-		errs <- http.ListenAndServeTLS(":443", serverTokenCert, serverTokenKey, nil)
+		errs <- http.ListenAndServeTLS(":443", serverCert, serverKey, nil)
 	}()
 
 	go func() {
