@@ -1,19 +1,12 @@
-# all others
-# * @DelineaXPM/dsv-contributors
-# until published, have it reviewed by original author
-* @4killo
+* @DelineaXPM/dsv-contributors
 
 # require admin review
 .github @DelineaXPM/dsv-admins
  CODEOWNERS @DelineaXPM/dsv-admins
-
-# all others
-# * @DelineaXPM/dsv-contributors
-# until published, have it reviewed by original author
-* @4killo
 
 # renovate bot and no review required
 aqua.yaml
 
 # no extra review required for devcontainer updates
 .devcontainer/
+*.md
