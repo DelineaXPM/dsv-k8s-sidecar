@@ -15,15 +15,15 @@ type HelmCharts struct {
 
 var HelmChartsList = []HelmCharts{
 	{
-		ReleaseName: "dsv-broker",
-		ChartPath:   filepath.Join(ChartsDirectory, "dsv-broker"),
+		ReleaseName: "dsv-k8s-controller",
+		ChartPath:   filepath.Join(ChartsDirectory, "dsv-k8s-controller"),
 		Namespace:   "dsv",
-		Values:      filepath.Join(CacheDirectory, "dsv-broker", "values.yaml"),
+		Values:      filepath.Join(CacheDirectory, "dsv-k8s-controller", "values.yaml"),
 	},
 	{
-		ReleaseName: "dsv-sidecar",
-		ChartPath:   filepath.Join(ChartsDirectory, "dsv-sidecar"),
+		ReleaseName: "dsv-k8s-sidecar",
+		ChartPath:   filepath.Join(ChartsDirectory, "dsv-k8s-sidecar"),
 		Namespace:   "dsv",
-		Values:      filepath.Join(CacheDirectory, "dsv-sidecar", "values.yaml"),
+		Values:      filepath.Join(CacheDirectory, "dsv-k8s-sidecar", "values.yaml"),
 	},
 }

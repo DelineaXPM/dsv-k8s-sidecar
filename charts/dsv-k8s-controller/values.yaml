@@ -1,0 +1,88 @@
+---
+# Default values for the Delina DevOps Secrets Vault (DSV) Secrets sidecar.
+
+# -- replicate count
+# @default - 1
+replicaCount: 1
+
+# -- image is the image configuration for the controller
+image:
+  # -- repository is the name of the fully qualified image
+  # @default -- docker.io/delinaxpm/dsv-k8s-controller
+  repository: dsv-k8s-controller
+  # -- pullPolicy is the image pull policy
+  # @default -- IfNotPresent
+  pullPolicy: IfNotPresent
+
+  # -- Overrides the image tag whose default is the chart appVersion. Provide a specific tag version to override, such as latest or valid semver version for the image.
+  # -- @default '' (empty)
+  tag: ''
+
+nameOverride: ''
+fullnameOverride: ''
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+# -- securityContext is the security context for the controller.
+# This uses chainguard static nonroot based image.
+# Reference: https://edu.chainguard.dev/chainguard/chainguard-images/reference/static/overview/
+securityContext:
+  # -- readOnlyRootFilesystem is the read only root file system flag.
+  # @default -- true
+  readOnlyRootFilesystem: true
+  # -- runAsNonRoot is the run as non root flag.
+  # @default -- true
+  runAsNonRoot: true
+  # -- runAsUser is the run as user.
+  # @default -- 65532 (from chainguard static image)
+  runAsUser: 65532
+  # -- runAsGroup is the run as group.
+  # @default -- 65532 (from chainguard static image)
+  runAsGroup: 65532
+
+# -- service is the service configuration for the controller
+service:
+  # -- brokergrpc is the service configuration for the broker grpc service.
+  brokergrpc:
+    port: 80
+    targetPort: 3000
+  # -- brokerauth is the service configuration for the broker auth service.
+  brokerauth:
+    tcpport: 80
+    tcptargetPort: 8080
+    tlsport: 443
+    tlstargetPort: 443
+
+resources: {}
+# limits:
+#   cpu: 500m
+#   memory: 512Mi
+# requests:
+#   cpu: 500m
+#   memory: 512Mi
+
+# -- configmap is the configuration for the controller.
+configmap:
+  # -- refreshTime is the time interval between refreshes of the secrets
+  # @default -- 5m
+  refreshTime: 5m
+  # -- dsvAPIURL is the URL of the DSV API. The URL should be in the format of `https://%s.secretsvaultcloud.com/v1`.
+  # The `%s` will be replaced with the tenant name in the next configuration input.
+  dsvAPIURL: https://%s.secretsvaultcloud.com/v1
+  # -- tenant is the name of the tenant in DSV.
+  # *REQUIRED FIELD*
+  tenant:
+  # -- clientID is the clientID provided by the generation of client credentials in DSV.
+  clientID:
+  # -- clientSecret is the clientSecret provided by the generation of client credentials in DSV.
+  clientSecret:
+  # -- logLevel is the log level for the sidecar
+  # @default -- info
+  logLevel: info
+  # -- authType is the type of authentication to use with the DSV API. At this time, only `client_credentials` is supported.
+  # @default -- client_credentials
+  authType: client_credentials

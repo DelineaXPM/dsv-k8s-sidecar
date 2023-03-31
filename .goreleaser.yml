@@ -1,5 +1,5 @@
 ---
-project_name: dsv-sidecar
+project_name: dsv-k8s-sidecar
 dist: .artifacts
 env:
   - GITHUB_TOKEN=''
@@ -24,8 +24,8 @@ builds:
     goos: [linux]
     goarch: [amd64]
 
-  - id: dsv-client
-    binary: dsv-client
+  - id: dsv-k8s-sidecar
+    binary: dsv-k8s-sidecar
     main: ./cmd/client/main.go
     mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
@@ -95,13 +95,13 @@ dockers:
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
   - id: docker-publish-client
-    ids: [dsv-client]
+    ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-client:{{ .Tag }}{{ end }}'
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-client:latest{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:{{ .Tag }}{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:latest{{ end }}'
     skip_push: false
-    dockerfile: ./docker/Dockerfile.client
+    dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
@@ -130,13 +130,13 @@ dockers:
 
   # local builds
   - id: local-docker-images-client
-    ids: [dsv-client]
+    ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - 'dsv-k8s-client:{{ .Tag }}'
-      - 'dsv-k8s-client:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+      - 'dsv-k8s-sidecar:{{ .Tag }}'
+      - 'dsv-k8s-sidecar:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
-    dockerfile: ./docker/Dockerfile.client
+    dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64

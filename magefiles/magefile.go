@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
-	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
 	"github.com/bitfield/script"
 
 	//mage:import
@@ -17,7 +16,7 @@ import (
 	//mage:import
 	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/cert"
 	//mage:import
-	_ "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
 	//mage:import
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
 

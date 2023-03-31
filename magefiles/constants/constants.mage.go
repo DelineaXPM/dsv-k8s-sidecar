@@ -49,7 +49,7 @@ const (
 	// ChartsDirectory is the directory where the helm charts are placed, in sub directories.
 	ChartsDirectory = "charts"
 	// SternFilter is the filter for dsv-filter-name for streaming logs easily.
-	SternFilter = "dsv-broker, dsv-sidecar"
+	SternFilter = "dsv-k8s-controller, dsv-k8s-sidecar"
 )
 
 // Cert prefixes

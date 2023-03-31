@@ -39,37 +39,37 @@ spec:
             - name: REFRESH_TIME
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: REFRESH_TIME
             - name: DSV_API_URL
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: DSV_API_URL
             - name: TENANT
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: TENANT
             - name: AUTH_TYPE
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: AUTH_TYPE
             - name: CLIENT_ID
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: CLIENT_ID
             - name: CLIENT_SECRET
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: CLIENT_SECRET
             - name: LOG_LEVEL
               valueFrom:
                 configMapKeyRef:
-                  name: dsv-broker-configmap
+                  name: dsv-k8s-controller-configmap
                   key: LOG_LEVEL
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

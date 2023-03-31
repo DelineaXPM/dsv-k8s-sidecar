@@ -53,9 +53,9 @@ newlines:
   endOfVersion: 0
 
 replacements:
-  - path: 'charts/dsv-broker/Chart.yaml'
+  - path: 'charts/dsv-k8s-controller/Chart.yaml'
     find: 'version: .*'
     replace: 'version: {{.Version}}'
-  - path: 'charts/dsv-sidecar/Chart.yaml'
+  - path: 'charts/dsv-k8s-sidecar/Chart.yaml'
     find: 'version: .*'
     replace: 'version: {{.Version}}'

@@ -99,6 +99,7 @@ func main() {
 			os.Exit(1)
 		}
 		log.Info("Auth Listening on port TLS: " + authport)
+
 		errs <- http.ListenAndServeTLS(":443", serverCert, serverKey, nil)
 	}()
 

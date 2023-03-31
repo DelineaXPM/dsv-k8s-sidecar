@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-const controllerServiceName = "dsv-broker.%s:80"
+const controllerServiceName = "dsv-k8s-controller.%s:80"
 
 var keyDir = util.EnvString("KEY_DIR", "/tmp/keys/") //nolint:gochecknoglobals // no other possibility
 
