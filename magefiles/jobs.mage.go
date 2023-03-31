@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
+	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/helm"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/k8s"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/minikube"
 
@@ -28,8 +28,9 @@ func (Job) Redeploy() {
 	pterm.DefaultSection.Println("(Job) Redeploy()")
 	mg.SerialDeps(
 		// helm.Helm{}.Uninstall,
-		mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
-		mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
+		//mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
+		//mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
 		// k8s.K8s{}.Logs,
+		helm.Helm{}.InstallCharts,
 	)
 }
