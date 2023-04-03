@@ -17,6 +17,13 @@ import (
 // Minikube contains the kind cli commands.
 type Minikube mg.Namespace
 
+// checkKubeConfig outputs a warning if the kubeconfig is not set to the local project, as this can cause confusion.
+func checkKubeConfig() {
+	mtu.CheckPtermDebug()
+	if os.Getenv("KUBECONFIG") != constants.Kubeconfig {
+		pterm.Warning.Printfln("KUBECONFIG is not set to %s, this can cause confusion, you probably haven't loaded direnv which should take care of this", constants.Kubeconfig)
+	}
+}
 func createCluster() error {
 	mtu.CheckPtermDebug()
 	minikubeArgs := []string{
@@ -69,6 +76,7 @@ func updateKubeconfig() error {
 // ➕ Create creates a new Minikube cluster and populates a kubeconfig in cachedirectory.
 func (Minikube) Init() error {
 	mtu.CheckPtermDebug()
+	checkKubeConfig()
 	if err := createCluster(); err != nil {
 		return err
 	}
@@ -119,6 +127,7 @@ func (Minikube) Init() error {
 // 🗑️ Destroy tears down the Kind cluster.
 func (Minikube) Destroy() error {
 	mtu.CheckPtermDebug()
+	checkKubeConfig()
 	if err := sh.Run("minikube", "delete", "--profile", constants.KindClusterName); err != nil {
 		pterm.Error.Printfln("minikube delete error: %v", err)
 		return err

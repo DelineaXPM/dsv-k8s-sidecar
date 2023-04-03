@@ -21,6 +21,20 @@ image:
 nameOverride: ''
 fullnameOverride: ''
 
+# -- strategy is the deployment strategy for the controller
+strategy:
+  # -- type is the deployment strategy type
+  # @default -- RollingUpdate
+  type: RollingUpdate
+  # -- rollingUpdate is the rolling update configuration for the controller
+  rollingUpdate:
+    # -- maxUnavailable is the maximum number of pods that can be unavailable during the update
+    # @default -- 1
+    maxUnavailable: 1
+    # -- maxSurge is the maximum number of pods that can be created over the desired number of pods
+    # @default -- 1
+    maxSurge: 1
+
 podAnnotations: {}
 
 podSecurityContext:

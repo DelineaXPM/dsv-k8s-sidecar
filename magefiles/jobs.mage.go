@@ -19,7 +19,7 @@ func (Job) Setup() {
 		// kind.Kind{}.Init,
 		minikube.Minikube{}.Init,
 		k8s.K8s{}.Init,
-		// helm.Helm{}.Init
+		helm.Helm{}.Init,
 	)
 }
 
@@ -28,7 +28,7 @@ func (Job) Redeploy() {
 	pterm.DefaultSection.Println("(Job) Redeploy()")
 	mg.SerialDeps(
 		// helm.Helm{}.Uninstall,
-		//mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
+		// mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
 		//mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
 		// k8s.K8s{}.Logs,
 		helm.Helm{}.InstallCharts,
