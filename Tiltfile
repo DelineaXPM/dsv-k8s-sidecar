@@ -184,6 +184,14 @@ local_resource(
   labels=["deploy"],
 )
 local_resource(
+  "helm:uninstallCharts",
+  cmd="mage helm:uninstallCharts",
+  trigger_mode=TRIGGER_MODE_MANUAL,
+  deps=['.cache/'],
+  auto_init=False,
+  labels=["deploy"],
+)
+local_resource(
   "k8s:logs",
   serve_cmd="mage k8s:logs",
   trigger_mode=TRIGGER_MODE_MANUAL,

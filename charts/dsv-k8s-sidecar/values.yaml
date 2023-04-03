@@ -5,12 +5,18 @@
 # @default -- 1
 replicaCount: 1
 
-## enable for user's service image
-# image:
-#   repository:
-#   pullPolicy: Always
-#   # -- Overrides the image tag whose default is the chart appVersion.
-#   tag:
+# -- image is the image configuration for the user provided service.
+# *REQUIRED*
+image:
+  # -- repository is the name of the fully qualified image
+  # *REQUIRED*
+  repository:
+  # -- pullPolicy is the image pull policy
+  # @default -- IfNotPresent
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  # @default -- '' (empty)
+  tag:
 
 nameOverride: ''
 fullnameOverride: ''

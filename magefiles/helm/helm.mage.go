@@ -126,3 +126,20 @@ func (Helm) Init() error {
 	pterm.Success.Printfln("(Helm) Init()")
 	return nil
 }
+
+// UninstallCharts uninstalls all the charts listed in constants.HelmChartsList.
+func (Helm) UninstallCharts() error {
+	if os.Getenv("KUBECONFIG") != ".cache/config" {
+		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
+	}
+	for _, chart := range constants.HelmChartsList {
+		if err :=
+			invokeHelm("uninstall",
+				chart.ReleaseName,
+				"--wait", // waits, those atomic already runs this
+			); err != nil {
+			return err
+		}
+	}
+	return nil
+}

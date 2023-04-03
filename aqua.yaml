@@ -1,7 +1,7 @@
 ---
 registries:
   - type: standard
-    ref: v3.147.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v3.149.1 # renovate: depName=aquaproj/aqua-registry
   - name: local
     type: local
     path: registry.yaml
@@ -12,7 +12,7 @@ packages:
     tags: ['ci']
   - name: charmbracelet/glow@v1.5.0
   - name: helm/helm@v3.11.1
-  - name: kubernetes/kubectl@v1.26.1
+  - name: kubernetes/kubectl@v1.26.3
   - name: kubernetes-sigs/kind@v0.17.0
   - name: cloudflare/cfssl@v1.6.3
   - name: goreleaser/goreleaser@v1.15.2
