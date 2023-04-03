@@ -50,7 +50,7 @@ func invokeHelm(args ...string) error {
 }
 
 // 🚀 InstallCharts installs the helm charts for any charts listed in constants.HelmChartsList.
-func (Helm) InstallCharts() error {
+func (Helm) InstallCharts() {
 	if os.Getenv("KUBECONFIG") != ".cache/config" {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
 	}
@@ -70,10 +70,11 @@ func (Helm) InstallCharts() error {
 				"--dependency-update", // update dependencies if they are missing before installing the chart
 				// NOTE: Can pass credentials/certs etc in. NOT ADDED YET - "--set-file", "sidecar.configFile=config.yaml",
 			); err != nil {
-			return err
+			pterm.Warning.Printfln("failed to install chart: %s, err: %v", chart.ReleaseName, err)
+		} else {
+			pterm.Success.Printfln("successfully installed chart: %s", chart.ReleaseName)
 		}
 	}
-	return nil
 }
 
 // ⚙️ Init sets up the required files to allow for local editing/overriding from CacheDirectory.
@@ -128,18 +129,20 @@ func (Helm) Init() error {
 }
 
 // UninstallCharts uninstalls all the charts listed in constants.HelmChartsList.
-func (Helm) UninstallCharts() error {
+func (Helm) UninstallCharts() {
 	if os.Getenv("KUBECONFIG") != ".cache/config" {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
 	}
 	for _, chart := range constants.HelmChartsList {
+		pterm.Info.Printfln("Uninstalling: %s", chart.ReleaseName)
 		if err :=
 			invokeHelm("uninstall",
 				chart.ReleaseName,
 				"--wait", // waits, those atomic already runs this
 			); err != nil {
-			return err
+			pterm.Warning.Printfln("failed to uninstall: %s, err: %v", chart.ReleaseName, err)
+		} else {
+			pterm.Success.Printfln("Successfully uninstalled: %s", chart.ReleaseName)
 		}
 	}
-	return nil
 }
