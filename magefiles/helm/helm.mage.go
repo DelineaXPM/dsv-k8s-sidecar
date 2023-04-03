@@ -55,6 +55,7 @@ func (Helm) InstallCharts() {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
 	}
 	for _, chart := range constants.HelmChartsList {
+		pterm.Info.Printfln("Installing chart: %s", chart.ReleaseName)
 		if err :=
 			invokeHelm("install",
 				chart.ReleaseName,
