@@ -54,8 +54,8 @@ const (
 
 // Cert prefixes
 const (
-	// PrefixSidecarToBrokerToken is the prefix for the cert files so it's easy to identify which one.
-	PrefixSidecarToBrokerToken = "sidecartobrokentoken"
-	// PrefixSidecarToBrokerGRPC is the prefix for the cert files so it's easy to identify which one.
-	PrefixSidecarToBrokerGRPC = "sidecartobrokerGRPC"
+	// PrefixSidecarToControllerToken is the prefix for the cert files so it's easy to identify which one.
+	PrefixSidecarToControllerToken = "sidecartobrokentoken"
+	// PrefixSidecarToControllerGRPC is the prefix for the cert files so it's easy to identify which one.
+	PrefixSidecarToControllerGRPC = "sidecartobrokerGRPC"
 )

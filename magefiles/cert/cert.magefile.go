@@ -61,15 +61,15 @@ func (Cert) Generate() error {
 	pterm.Info.Println("choose which cert to generate")
 	selection, err := pterm.DefaultInteractiveSelect.WithOptions(
 		[]string{
-			"Sidecar to Broker GRPC",
-			"Sidecar To Broker Token",
+			"Sidecar to Controller GRPC",
+			"Sidecar To Controller Token",
 		},
 	).Show()
 	if err != nil {
 		return err
 	}
 	switch selection {
-	case "Sidecar to Broker GRPC":
+	case "Sidecar to Controller GRPC":
 		// #############
 		// # TOKEN #
 		// #############.
@@ -91,12 +91,12 @@ func (Cert) Generate() error {
 			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
 			return err
 		}
-		if err := moveFiles(constants.PrefixSidecarToBrokerGRPC); err != nil {
+		if err := moveFiles(constants.PrefixSidecarToControllerGRPC); err != nil {
 			pterm.Error.Printfln("terminating, due to failure in moving files: %v", err)
 			return err
 		}
 
-	case "Sidecar To Broker Token":
+	case "Sidecar To Controller Token":
 
 		// #############
 		// # CERTTOKEN #
@@ -118,7 +118,7 @@ func (Cert) Generate() error {
 			pterm.Error.Printfln("issue running cfssljson -bare ca: %v", err)
 			return err
 		}
-		if err := moveFiles(constants.PrefixSidecarToBrokerToken); err != nil {
+		if err := moveFiles(constants.PrefixSidecarToControllerToken); err != nil {
 			pterm.Error.Printfln("terminating, due to failure in moving files: %v", err)
 			return err
 		}

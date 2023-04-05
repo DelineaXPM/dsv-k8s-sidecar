@@ -205,7 +205,7 @@ func (c *secretClient) updateToken() {
 		return
 	}
 	c.token = respStr.Token
-	log.WithField("token", c.token).Info("Received Token")
+	log.Info("Received Token")
 }
 
 func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretClientError) {

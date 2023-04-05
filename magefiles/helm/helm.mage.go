@@ -49,7 +49,7 @@ func invokeHelm(args ...string) error {
 	return sh.Run(binary, args...)
 }
 
-// 🚀 Instats installs the helm charts for any charts listed in constants.HelmChartsList.
+// 🚀 Install installs or upgrades the helm charts for any charts listed in constants.HelmChartsList.
 func (Helm) Install() {
 	if os.Getenv("KUBECONFIG") != ".cache/config" {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
@@ -57,13 +57,14 @@ func (Helm) Install() {
 	for _, chart := range constants.HelmChartsList {
 		pterm.Info.Printfln("Installing chart: %s", chart.ReleaseName)
 		if err :=
-			invokeHelm("install",
+			invokeHelm("upgrade",
 				chart.ReleaseName,
 				chart.ChartPath,
 				"--namespace", constants.KubectlNamespace,
+				"--install", // install if not already installed
 				"--atomic",  // if set, the installation process deletes the installation on failure. The --wait flag will be set automatically if --atomic is used
-				"--replace", // re-use the given name, only if that name is a deleted release which remains in the history. This is unsafe in production
-				"--wait",    // waits, those atomic already runs this
+				// "--replace", // re-use the given name, only if that name is a deleted release which remains in the history. This is unsafe in production
+				"--wait", // waits, those atomic already runs this
 				"--values", filepath.Join(constants.CacheChartsDirectory, chart.ReleaseName, "values.yaml"),
 				"--timeout", constants.HelmTimeout,
 				"--force",             // force resource updates through a replacement strategy

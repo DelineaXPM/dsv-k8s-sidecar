@@ -83,7 +83,7 @@ dockers:
     ids: [dsv-controller]
     goos: linux
     image_templates:
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Tag }}{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Version }}{{ end }}'
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:latest{{ end }}'
     skip_push: false
     dockerfile: ./docker/Dockerfile.controller
@@ -98,7 +98,7 @@ dockers:
     ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:{{ .Tag }}{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:{{ .Version }}{{ end }}'
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:latest{{ end }}'
     skip_push: false
     dockerfile: ./docker/Dockerfile.sidecar
@@ -115,7 +115,7 @@ dockers:
     ids: [dsv-controller]
     goos: linux
     image_templates:
-      - 'dsv-k8s-controller:{{ .Tag }}'
+      - 'dsv-k8s-controller:{{ .Version }}'
       - 'dsv-k8s-controller:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
     dockerfile: ./docker/Dockerfile.controller
@@ -126,14 +126,13 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.version="{{ .Tag }}"
 
   # local builds
   - id: local-docker-images-client
     ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - 'dsv-k8s-sidecar:{{ .Tag }}'
+      - 'dsv-k8s-sidecar:{{ .Version }}'
       - 'dsv-k8s-sidecar:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
     dockerfile: ./docker/Dockerfile.sidecar
@@ -144,4 +143,3 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.version="{{ .Tag }}"
