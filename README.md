@@ -1,97 +1,48 @@
 # dsv-k8s-sidecar
 
-## Getting Started
+## Overview
 
-- [Developer](DEVELOPER.md): instructions on running tests, local tooling, and other resources.
-- [DSV Documentation](https://docs.delinea.com/dsv/current?ref=githubrepo)
+There are two applications that are built in this repo:
 
-There are two applications that are built in this repo: sidecar and broker
+| Application        | Description                                                                                                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dsv-k8s-sidecar    | Responsible for fetching and periodically updating a configuration file stored at a shared volume that is used by the pods.                                                               |
+| dsv-k8s-controller | The controller watches for new pods with the specific annotation `dsv` to come online with the value of the `tenant` intended to be used, it then adds this pod to the internal registry. |
 
-The sidecar container is a responsible for fetching and periodically update a configuration file stored at a shared volume.
-This is defined as a shared volume by the pods within the container (see `example.yml`).
-Note: there is no guarantee that the file has been created by the time the companion containers are online.
-The sidecar must have the following ENV variables defined:
+> **_Note_**
+> There is no guarantee that the file has been created by the time the companion containers are online.
 
-```yaml
-- name: DSV_SECRETS
-  value: foo bar us-east-1/baz
-- name: POD_IP
-  valueFrom:
-    fieldRef:
-      fieldPath: status.podIP
-- name: POD_NAME
-  valueFrom:
-    fieldRef:
-      fieldPath: metadata.name
-```
+## Installing
 
-The top value defines the paths of the secrets intended to be used by the container.
-This is a list separated by spaces.
-The broker watches for new pods with a the specific annotation `dsv` to come online with the value of the `tenant` intended to be used, it then adds this pod to the internal registry.
-When the sidecar comes online it must first call the auth endpoint using it's podname and ip address.
-The broker requires the following environmental variables to be present:
+Both the sidecar & controller have helm charts located in [charts](charts/) with `README.md` files containing a reference for the input values required.
 
-```yaml
-- name: TENANT
-  value: tenant_name
-- name: CLIENT_ID
-  value:
-- name: CLIENT_SECRET
-  value:
-```
+## How It Works
 
-The role definition at the beginning of the `broker.yml` file is required for the broker pod to run.
-The services below are also required because the sidecar uses the name to make internal calls based on the service name.
-Customers should use a similar file to run the services in their cluster.
+- The controller chart expects input values that provide client credentials to connect to dsv.
+- When the sidecar comes online it must first call the auth endpoint using it's podname and ip address.
 
-In order to run the following flags are required.
+![overview](docs/overview.svg)
 
-### Controller
+## FAQ
 
-| Flags             | Description                |
-| ----------------- | -------------------------- |
-| `tenant`          | abbreviation for tenant    |
-| `client-id`       | - client credential id     |
-| `client-secret`   | - client credential secret |
-| `port` (optional) | port to run on             |
+- Do I need more than one controller?
+  - One controller can do the job required.
+  - If you want to scope the controller to a specific namespace and/or client credential for more isolation, then you could consider installing more.
 
-### Client
+## Development
 
-Client uses OS environment variables for configuration.
+- See [developer](docs/developer-quick-start.md)
 
-| Environment Variables | Description                                                                                                                                                 |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CONTROLLER_SERVICE`  | name of the controller service that is running on the kubernetes instance                                                                                   |
-| `CONFIG_DIRECTORY`    | location of where to find configuration files                                                                                                               |
-| `REFRESH_TIME`        | how often the client should look for updates to configuration (default 15m) NOTE: uses [golang duration format](https://golang.org/pkg/time/#ParseDuration) |
-
-## Build and Test
-
-- Build: `mage build` and view artifacts in `.artifacts/platform/<binaryname>`
-- Test: `mage go:testsum ./...`
-
-> Tip: Chain commands like `mage build go:testsum ./...`
-
-## Default Ports
-
-| Port | App         |
-| ---- | ----------- |
-| 3000 | Server      |
-| 8080 | Auth Server |
-
-## Kubernetes
-
-Examples of kubernetes files can be found in the `k8s` folder
-
-## Todos
+## Possible Future Improvements
 
 - Push token instead of pull
 - Certificate auth instead of JWT
 
+If there are needs missing for your usage, feel free to open a GitHub issue describing your challenges and any suggestions for improvement.
+
 ### Sample Applications for QA Testing
 
-- [example/app1](example/app1)
-- [example/app2](example/app2)
+- [example/app1](examples/app1)
 
 ## Running Project Against Local Kind Cluster
 
@@ -107,12 +58,12 @@ Examples of kubernetes files can be found in the `k8s` folder
 
 Dev Deployment:
 
-- Deploy the manifests individually: `mage k8s:apply ./.cache/charts/k8s/broker.yml`.
+- Deploy the manifests individually: `mage k8s:apply ./.cache/charts/k8s/controller.yml`.
 - Deploy all locally: `mage helm:install`.
 
 ## Optional Running Locally with TLS
 
-There are two communication between sidecard and broker
+There are two communication between sidecard and controller
 
 1. Getting JWT token via http/https
 2. Secrets via GRPC
@@ -121,20 +72,27 @@ Optionally we can encrypt these communications at container level.
 
 ## Generate self signed certificate
 
-- run `mage cert:generate` and choose `Sidecar To Broker`: This will generate certs and keys in .cache folder.
+- run `mage cert:generate` and choose `Sidecar To Controller`: This will generate certs and keys in .cache folder.
 - create kubernetes secret: `mage k8s:createsecret` or manually: kubectl create secret generic keys --from-file=key.pem --from-file=cert.pem --from-file=ca.pem
 
-### SideCard to Broker GRPC
+### SideCard to Controller GRPC
 
-Add above k8 secret as volume in Broker's k8 deployment and add the name of cert and private key name env in k8 values.yml.
+Add above k8 secret as volume in Controller's k8 deployment and add the name of cert and private key name env in k8 values.yml.
 `KEY_DIR` => the volume directory.
 `SERVER_CRT` => this will be certs.
 `SERVER_KEY` => this will be private key.
 
-### SideCard to Broker Token
+### SideCard to Controller Token
 
 Add above k8 secret as volume in sidecar's k8 deployment and add the name of cert env in k8 values.yml.
 `KEY_DIR` => the volume directory.
 `SERVER_CRT` => this will be certs.
 
-Once the above setup is done all kubernetes secret will mapped to volume and both the sidecard and broker will pick certificates up from volume.
+Once the above setup is done all kubernetes secret will mapped to volume and both the sidecard and controller will pick certificates up from volume.
+
+## Additional Resources
+
+- [Developer](DEVELOPER.md): instructions on running tests, local tooling, and other resources.
+- [DSV Documentation](https://docs.delinea.com/dsv/current?ref=githubrepo)
+- [DSV-K8S](https://github.com/DelineaXPM/dsv-k8s) is another approach using a Kubernetes syncing and injector hook to directly update Kubernetes secrets.
+  This alternative approach does not leverage a sidecar.

@@ -59,3 +59,11 @@ const (
 	// PrefixSidecarToControllerGRPC is the prefix for the cert files so it's easy to identify which one.
 	PrefixSidecarToControllerGRPC = "sidecartobrokerGRPC"
 )
+
+// Diagram and docs
+const (
+	// D2OverviewDiagram is the path to the d2 file for the overview diagram.
+	D2OverviewDiagram = "./docs/overview.d2"
+	// D2OverviewDiagramSVG is the path to the png file for the overview diagram.
+	D2OverviewDiagramSVG = "./docs/overview.svg"
+)

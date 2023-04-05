@@ -1,0 +1,23 @@
+kubernetes: {
+  icon: https://icons.terrastruct.com/azure%2FContainer%20Service%20Color%2FKubernetes%20Services.svg
+  style: {
+    font-size: 28
+  }
+
+  namespace-one
+  namespace-two: dsv integration setup: {
+    # Controller detects a change, pushes the change to the configmap.
+    # Sidecar reads this and updates the value for the container.
+    dsv-k8s-controller -> UsersPod.configmap -> UsersPod.dsv-k8s-sidecar -> UsersPod.DesiredUserContainer
+
+    UsersPod: {
+      DesiredUserContainer
+      dsv-k8s-sidecar
+      configmap: {
+        shape: stored_data
+      }
+    }
+  }
+
+  namespace-three
+}
