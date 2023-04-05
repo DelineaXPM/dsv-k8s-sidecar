@@ -73,6 +73,19 @@ func updateKubeconfig() error {
 	return nil
 }
 
+// 💾 LoadImages loads the images into the minikube cluster.
+func (Minikube) LoadImages() {
+	mtu.CheckPtermDebug()
+	for _, chart := range constants.HelmChartsList {
+		// Load image into minikube
+		if err := sh.Run("minikube", "image", "load", "--profile", constants.KindClusterName, fmt.Sprintf("%s:latest", chart.ReleaseName)); err != nil {
+			pterm.Error.Printfln("unable to load image into minikube: %v", err)
+		}
+		pterm.Success.Printfln("image loaded into minikube: %s", chart.ReleaseName)
+
+	}
+}
+
 // ➕ Create creates a new Minikube cluster and populates a kubeconfig in cachedirectory.
 func (Minikube) Init() error {
 	mtu.CheckPtermDebug()

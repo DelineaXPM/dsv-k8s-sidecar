@@ -31,6 +31,6 @@ func (Job) Redeploy() {
 		// mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
 		//mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
 		// k8s.K8s{}.Logs,
-		helm.Helm{}.InstallCharts,
+		helm.Helm{}.Install,
 	)
 }

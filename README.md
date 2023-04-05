@@ -108,7 +108,7 @@ Examples of kubernetes files can be found in the `k8s` folder
 Dev Deployment:
 
 - Deploy the manifests individually: `mage k8s:apply ./.cache/charts/k8s/broker.yml`.
-- Deploy all locally: `mage helm:installcharts`.
+- Deploy all locally: `mage helm:install`.
 
 ## Optional Running Locally with TLS
 

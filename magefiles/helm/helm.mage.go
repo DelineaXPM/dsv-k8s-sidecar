@@ -49,8 +49,8 @@ func invokeHelm(args ...string) error {
 	return sh.Run(binary, args...)
 }
 
-// 🚀 InstallCharts installs the helm charts for any charts listed in constants.HelmChartsList.
-func (Helm) InstallCharts() {
+// 🚀 Instats installs the helm charts for any charts listed in constants.HelmChartsList.
+func (Helm) Install() {
 	if os.Getenv("KUBECONFIG") != ".cache/config" {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
 	}
@@ -69,6 +69,7 @@ func (Helm) InstallCharts() {
 				"--force",             // force resource updates through a replacement strategy
 				"--wait-for-jobs",     // will wait until all Jobs have been completed before marking the release as successful
 				"--dependency-update", // update dependencies if they are missing before installing the chart
+				"--debug",             // enable verbose output
 				// NOTE: Can pass credentials/certs etc in. NOT ADDED YET - "--set-file", "sidecar.configFile=config.yaml",
 			); err != nil {
 			pterm.Warning.Printfln("failed to install chart: %s, err: %v", chart.ReleaseName, err)
@@ -129,8 +130,8 @@ func (Helm) Init() error {
 	return nil
 }
 
-// UninstallCharts uninstalls all the charts listed in constants.HelmChartsList.
-func (Helm) UninstallCharts() {
+// Uninstall uninstalls all the charts listed in constants.HelmChartsList.
+func (Helm) Uninstall() {
 	if os.Getenv("KUBECONFIG") != ".cache/config" {
 		pterm.Warning.Printfln("KUBECONFIG is not set to .cache/config. Make sure direnv/env variables loading if you want to keep the project changes from changing your user KUBECONFIG.")
 	}
@@ -139,7 +140,8 @@ func (Helm) UninstallCharts() {
 		if err :=
 			invokeHelm("uninstall",
 				chart.ReleaseName,
-				"--wait", // waits, those atomic already runs this
+				"--wait",  // waits, those atomic already runs this
+				"--debug", // enable verbose output
 			); err != nil {
 			pterm.Warning.Printfln("failed to uninstall: %s, err: %v", chart.ReleaseName, err)
 		} else {

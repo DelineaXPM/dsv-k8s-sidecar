@@ -4,7 +4,9 @@
 # -- replicaCount
 # @default -- 1
 replicaCount: 1
-
+# -- containername is the name of the user provided container
+# *REQUIRED*
+containername:
 # -- image is the image configuration for the user provided service.
 # *REQUIRED*
 image:

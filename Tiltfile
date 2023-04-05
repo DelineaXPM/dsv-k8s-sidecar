@@ -175,8 +175,8 @@ local_resource(
   labels=["deploy"],
 )
 local_resource(
-  "helm:installCharts",
-  cmd="mage helm:installCharts",
+  "helm:install",
+  cmd="mage helm:install",
   trigger_mode=TRIGGER_MODE_MANUAL,
   deps=['.cache/'],
   resource_deps=['job:setup'],
@@ -184,8 +184,8 @@ local_resource(
   labels=["deploy"],
 )
 local_resource(
-  "helm:uninstallCharts",
-  cmd="mage helm:uninstallCharts",
+  "helm:uninstall",
+  cmd="mage helm:uninstall",
   trigger_mode=TRIGGER_MODE_MANUAL,
   deps=['.cache/'],
   auto_init=False,
