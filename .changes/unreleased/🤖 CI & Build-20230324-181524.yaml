@@ -1,3 +1,0 @@
-kind: "\U0001F916 CI & Build"
-body: Adjust linting settings to be less aggressive, and pull only recent file changes.
-time: 2023-03-24T18:15:24.84506-05:00
