@@ -209,13 +209,12 @@ func (c *secretClient) updateToken() {
 }
 
 func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretClientError) {
-	var err *SecretClientError
 	val := c.cache.Get(secret)
 	if val == nil {
 		log.WithField("secret", secret).Info("Cache miss")
 		return c.fetchSecretFromDSV(secret)
 	}
-	return val.(*SecretResponseData), err
+	return val.(*SecretResponseData), nil
 }
 
 func (c *secretClient) fetchSecretFromDSV(secret string) (*SecretResponseData, *SecretClientError) {
