@@ -29,7 +29,7 @@ func (Job) Redeploy() {
 	mg.SerialDeps(
 		// helm.Helm{}.Uninstall,
 		// mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
-		//mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
+		// mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
 		// k8s.K8s{}.Logs,
 		helm.Helm{}.Install,
 	)

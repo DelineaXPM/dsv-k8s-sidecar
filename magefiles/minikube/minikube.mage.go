@@ -82,7 +82,6 @@ func (Minikube) LoadImages() {
 			pterm.Error.Printfln("unable to load image into minikube: %v", err)
 		}
 		pterm.Success.Printfln("image loaded into minikube: %s", chart.ReleaseName)
-
 	}
 }
 
