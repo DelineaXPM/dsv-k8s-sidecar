@@ -273,6 +273,7 @@ func (c *secretClient) Close() error {
 func (c *secretClient) updateCache() {
 	log.Info("Updating Cache")
 	for _, key := range c.cache.KeySet() {
+		key := key
 		go func() {
 			val, err := c.getSecretFromBambe(key)
 			if err != nil {
