@@ -36,14 +36,16 @@ runtimes:
     - python@3.10.8
     - go@1.19 # make sure this matches what's in go.mod for this to work correctly.
 cli:
-  version: 1.6.1
+  version: 1.7.0
 
 lint:
   enabled:
-    - renovate@35.24.4
-    - actionlint@1.6.23
+    - oxipng@8.0.0
+    - svgo@3.0.2
+    - renovate@35.32.2
+    - actionlint@1.6.24
     - git-diff-check@SYSTEM
-    - gitleaks@8.16.1
+    - gitleaks@8.16.2
     - gofmt@1.19.3
     - golangci-lint@1.52.2
     - hadolint@2.12.0
