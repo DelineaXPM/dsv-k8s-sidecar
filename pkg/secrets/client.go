@@ -119,7 +119,11 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 	scl.updateToken()
 
 	go func() {
-	TickerForLoop:
+		defer func() {
+			ticker.Stop()
+			cacheTicker.Stop()
+			log.Info("exited timer")
+		}()
 		for {
 			select {
 			case <-ticker.C:
@@ -127,12 +131,9 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 			case <-cacheTicker.C:
 				go scl.updateCache()
 			case <-scl.quit:
-				ticker.Stop()
-				cacheTicker.Stop()
-				break TickerForLoop
+				return
 			}
 		}
-		log.Info("exited timer")
 	}()
 
 	return scl
