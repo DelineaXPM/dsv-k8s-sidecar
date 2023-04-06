@@ -129,6 +129,7 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 				go scl.updateCache()
 			case <-scl.quit:
 				ticker.Stop()
+				cacheTicker.Stop()
 				break TickerForLoop
 			}
 		}
