@@ -83,50 +83,51 @@ type secretClient struct {
 	quit                chan bool
 	error               *SecretClientError
 	cache               cache.Cache
-	baseAuthUrl         string
-	baseSecretUrl       string
-	initiateCertAuthUrl string
+	baseAuthURL         string
+	baseSecretURL       string
+	initiateCertAuthURL string
 	authType            string
 }
 
-func CreateSecretClient(tenant, id, secret, authType string) SecretClient {
-	baseUrl := util.EnvString("THY_API_URL", "https://%s.qabambe.com/v1")
-	baseAuthUrl := baseUrl + "/token"
-	baseSecretUrl := baseUrl + "/secrets/%s"
-	initiateCertAuthUrl := baseUrl + "/certificate/auth"
+func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //nolint:ireturn //ireturn: by design this is ok to keep like this.
+	baseURL := util.EnvString("DSV_API_URL", "https://%s.qabambe.com/v1")
+	baseAuthURL := baseURL + "/token"
+	baseSecretURL := baseURL + "/secrets/%s"
+	initiateCertAuthURL := baseURL + "/certificate/auth"
 
 	cacheRefreshTime, err := time.ParseDuration(refreshTimeString)
 	if err != nil {
 		panic("Bad Refresh Time Specified")
 	}
 
-	ticker := time.NewTicker(30 * time.Minute)      // Refresh token reset
+	// Refresh token reset
+	ticker := time.NewTicker(30 * time.Minute)      //nolint:gomnd // allow constant value
 	cacheTicker := time.NewTicker(cacheRefreshTime) // Set refresh time through env?
 	q := make(chan bool)
 
-	c := &secretClient{
+	scl := &secretClient{
 		tenant:              tenant,
 		id:                  id,
 		secret:              secret,
 		quit:                q,
 		cache:               cache.CreateMemoryCache(),
-		baseAuthUrl:         baseAuthUrl,
-		baseSecretUrl:       baseSecretUrl,
-		initiateCertAuthUrl: initiateCertAuthUrl,
+		baseAuthURL:         baseAuthURL,
+		baseSecretURL:       baseSecretURL,
+		initiateCertAuthURL: initiateCertAuthURL,
 		authType:            authType,
 	}
 
-	c.updateToken()
+	scl.updateToken()
 
 	go func() {
 	TickerForLoop:
 		for {
 			select {
 			case <-ticker.C:
-				go c.updateToken()
+				go scl.updateToken()
 			case <-cacheTicker.C:
-				go c.updateCache()
-			case <-c.quit:
+				go scl.updateCache()
+			case <-scl.quit:
 				ticker.Stop()
 				break TickerForLoop
 			}
@@ -134,7 +135,7 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient {
 		log.Info("exited timer")
 	}()
 
-	return c
+	return scl
 }
 
 func (c *secretClient) setError(status int, err error) {
@@ -169,7 +170,7 @@ func (c *secretClient) updateToken() {
 		}
 	}
 
-	url := fmt.Sprintf(c.baseAuthUrl, c.tenant)
+	url := fmt.Sprintf(c.baseAuthURL, c.tenant)
 	log.WithField("url", url).Info("Fetching Token")
 	timeout := time.Duration(10 * time.Second)
 	body, err := json.Marshal(b)
@@ -204,7 +205,7 @@ func (c *secretClient) updateToken() {
 		return
 	}
 	c.token = respStr.Token
-	log.WithField("token", c.token).Info("Received Token")
+	log.Info("Received Token")
 }
 
 func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretClientError) {
@@ -223,7 +224,7 @@ func (c *secretClient) getSecretFromBambe(secret string) (*SecretResponseData, *
 		return nil, c.error
 	}
 
-	url := fmt.Sprintf(c.baseSecretUrl, c.tenant, secret)
+	url := fmt.Sprintf(c.baseSecretURL, c.tenant, secret)
 	log.WithField("url", url).Info("Fetching Secret")
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -284,7 +285,7 @@ func (c *secretClient) updateCache() {
 }
 
 func (c *secretClient) SetSecretURL(url string) {
-	c.baseSecretUrl = url
+	c.baseSecretURL = url
 }
 
 func (c *secretClient) initiateCertAuth() (string, string, error) {
@@ -323,7 +324,7 @@ func (c *secretClient) initiateCertAuth() (string, string, error) {
 	}{}
 
 	log.WithField("request", request).Info("initiate auth request")
-	url := fmt.Sprintf(c.initiateCertAuthUrl, c.tenant)
+	url := fmt.Sprintf(c.initiateCertAuthURL, c.tenant)
 	log.WithField("url", url).Info("initiateCertAuthUrl")
 	serRequest, err := json.Marshal(request)
 	if err != nil {

@@ -1,6 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "DelineaXPM/renovate-config"
+  "extends": ["DelineaXPM/renovate-config"],
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "matchPackageNames": [
+        "helm.sh/helm/v3",
+        "github.com/mittwald/go-helm-client"
+      ],
+      "groupName": "risky-breaking-changes",
+      "enabled": false
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchPackageNames": ["k8s.io/api"],
+      "groupName": "risky-k8s-changes",
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    }
   ]
 }

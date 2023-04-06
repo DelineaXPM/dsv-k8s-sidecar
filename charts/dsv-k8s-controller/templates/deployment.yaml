@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dsv.fullname" . }}
+  labels:
+    {{- include "dsv.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "dsv.selectorLabels" . | nindent 6 }}
+  strategy:
+    type:  {{ .Values.strategy.type }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.strategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.strategy.rollingUpdate.maxSurge }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "dsv.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.brokergrpc.targetPort }}
+              protocol: TCP
+          env:
+            - name: REFRESH_TIME
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: REFRESH_TIME
+            - name: DSV_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: DSV_API_URL
+            - name: TENANT
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: TENANT
+            - name: AUTH_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: AUTH_TYPE
+            - name: CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: CLIENT_ID
+            - name: CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: CLIENT_SECRET
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: dsv-k8s-controller-configmap
+                  key: LOG_LEVEL
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      serviceAccount: {{ template "dsv.fullname" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}

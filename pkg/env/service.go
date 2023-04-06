@@ -3,7 +3,6 @@ package env
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
@@ -15,13 +14,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//nolint:gochecknoglobals // already in design, leaving as ok
 var (
-	configDir         = util.EnvString("CONFIG_DIR", "/var/secrets/")
-	SecretFile        = configDir + util.EnvString("SECRET_FILE", "thy.json")
+	configDir         = util.EnvString("CONFIG_DIR", "/tmp/secret/")
+	SecretFile        = configDir + util.EnvString("SECRET_FILE", "dsv.json")
 	refreshTimeString = util.EnvString("REFRESH_TIME", "15m")
 )
 
-const SecretEnvName = "THY_SECRETS"
+const SecretEnvName = "DSV_SECRETS"
 
 type EnvironmentAgent interface {
 	Run() <-chan error
@@ -148,7 +148,15 @@ func (a *environmentAgent) write(secrets chan struct {
 		return err
 	}
 
-	if err := ioutil.WriteFile(SecretFile, data, 0o777); err != nil {
+	if _, err := os.Stat(configDir); err != nil {
+		err := os.MkdirAll(configDir, os.ModePerm)
+		if err != nil {
+			log.WithField("error", err.Error()).Fatal("unable to create secrets directory")
+			return err
+		}
+	}
+
+	if err := os.WriteFile(SecretFile, data, os.ModePerm); err != nil {
 		log.WithField("error", err.Error()).Fatal("unable to write secrets file")
 		return err
 	}

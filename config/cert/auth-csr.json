@@ -1,6 +1,10 @@
 {
-  "CN": "dsv-broker",
-  "hosts": ["127.0.0.1", "dsv-broker", "dsv-broker.default.svc.cluster.local"],
+  "CN": "dsv-k8s-controller",
+  "hosts": [
+    "127.0.0.1",
+    "dsv-k8s-controller",
+    "dsv-k8s-controller.default.svc.cluster.local"
+  ],
   "key": {
     "algo": "rsa",
     "size": 2048

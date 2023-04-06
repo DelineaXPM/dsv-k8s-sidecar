@@ -1,6 +1,44 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Features
+- **logger:** implemented structured logging
+- **logger:** implemented structured logging
+- **logger:** implemented structured logging
+- **logger:** added logger
+- **logger:** create logger
+- **rgb:** made it possible to use RGB colors as background
+- **rgb:** made it possible to use RGB colors as background
+- **rgb:** made it possible to use RGB colors as background
+
+### Bug Fixes
+- **rgb:** fix Fade maxValue == current not displaying the last color
+
+
+<a name="v0.12.57"></a>
+## [v0.12.57] - 2023-03-28
+### Code Refactoring
+- use `pterm.Print` instead of `fmt.Print` functions
+
+
+<a name="v0.12.56"></a>
+## [v0.12.56] - 2023-03-14
+### Bug Fixes
+- **table:** fixed panic when multiple lines contained color in a single row
+
+
+<a name="v0.12.55"></a>
+## [v0.12.55] - 2023-03-04
+### Features
+- **table:** multiline support for table printer
+- **table:** multiline support for table printer
+
+### Code Refactoring
+- **table:** fixed linting
+
+
+<a name="v0.12.54"></a>
+## [v0.12.54] - 2023-01-22
 ### Bug Fixes
 - **tree:** print top node [#443](https://github.com/pterm/pterm/issues/443)
 
@@ -1112,7 +1150,11 @@ removed `Header` and put it's content directly into `HeaderPrinter`
 - initial commit
 
 
-[Unreleased]: https://github.com/pterm/pterm/compare/v0.12.53...HEAD
+[Unreleased]: https://github.com/pterm/pterm/compare/v0.12.57...HEAD
+[v0.12.57]: https://github.com/pterm/pterm/compare/v0.12.56...v0.12.57
+[v0.12.56]: https://github.com/pterm/pterm/compare/v0.12.55...v0.12.56
+[v0.12.55]: https://github.com/pterm/pterm/compare/v0.12.54...v0.12.55
+[v0.12.54]: https://github.com/pterm/pterm/compare/v0.12.53...v0.12.54
 [v0.12.53]: https://github.com/pterm/pterm/compare/v0.12.52...v0.12.53
 [v0.12.52]: https://github.com/pterm/pterm/compare/v0.12.51...v0.12.52
 [v0.12.51]: https://github.com/pterm/pterm/compare/v0.12.50...v0.12.51

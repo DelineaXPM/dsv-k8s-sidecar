@@ -10,24 +10,30 @@ import "github.com/DelineaXPM/dsv-k8s-sidecar/magefiles"
 
 ## Index
 
-- [Variables](<#variables>)
-- [func Build() error](<#func-build>)
-- [func Clean()](<#func-clean>)
-- [func Init() error](<#func-init>)
-- [type Job](<#type-job>)
-  - [func (Job) Redeploy()](<#func-job-redeploy>)
-  - [func (Job) Setup()](<#func-job-setup>)
-
+- [magefiles](#magefiles)
+  - [Index](#index)
+  - [Variables](#variables)
+  - [func Build](#func-build)
+  - [func BuildAll](#func-buildall)
+  - [func Clean](#func-clean)
+  - [func Init](#func-init)
+  - [func InstallTrunk](#func-installtrunk)
+  - [func Release](#func-release)
+  - [func TrunkInit](#func-trunkinit)
+  - [type Changelog](#type-changelog)
+    - [func (Changelog) Bump](#func-changelog-bump)
+    - [func (Changelog) Merge](#func-changelog-merge)
+  - [type Job](#type-job)
+    - [func (Job) Redeploy](#func-job-redeploy)
+    - [func (Job) Setup](#func-job-setup)
 
 ## Variables
 
 ```go
-var CITools = []string{
-    "github.com/goreleaser/goreleaser@latest",
-}
+var CITools = []string{}
 ```
 
-## func [Build](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L97>)
+## func [Build](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/goreleaser.mage.go#L35)
 
 ```go
 func Build() error
@@ -35,7 +41,15 @@ func Build() error
 
 🔨 Build builds the project for the current platform.
 
-## func [Clean](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L84>)
+## func [BuildAll](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/goreleaser.mage.go#L55)
+
+```go
+func BuildAll() error
+```
+
+🔨 BuildAll builds all the binaries defined in the project, for all platforms. This includes Docker image generation but skips publish. If there is no additional platforms configured in the task, then basically this will just be the same as \`mage build\`.
+
+## func [Clean](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L116)
 
 ```go
 func Clean()
@@ -43,7 +57,7 @@ func Clean()
 
 Clean up after yourself.
 
-## func [Init](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L47>)
+## func [Init](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L55)
 
 ```go
 func Init() error
@@ -51,7 +65,55 @@ func Init() error
 
 Init runs multiple tasks to initialize all the requirements for running a project for a new contributor.
 
-## type [Job](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L13>)
+## func [InstallTrunk](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L129)
+
+```go
+func InstallTrunk() error
+```
+
+InstallTrunk installs trunk.io tooling if it isn't already found.
+
+## func [Release](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/goreleaser.mage.go#L77)
+
+```go
+func Release() error
+```
+
+🔨 Release generates a release for the current platform.
+
+## func [TrunkInit](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/magefile.go#L145)
+
+```go
+func TrunkInit() error
+```
+
+TrunkInit ensures the required runtimes are installed.
+
+## type [Changelog](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/changelog.mage.go#L15)
+
+Changelog contains the changelog tasks that batch up the changelog commands and allow triggering a release with an explicit version.
+
+```go
+type Changelog mg.Namespace
+```
+
+### func \(Changelog\) [Bump](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/changelog.mage.go#L18)
+
+```go
+func (Changelog) Bump() error
+```
+
+📦 Bump the application as an interactive command, prompting for semver change type, merging changelog, and running format and git add.
+
+### func \(Changelog\) [Merge](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/changelog.mage.go#L76)
+
+```go
+func (Changelog) Merge() error
+```
+
+📦 Merge updates the changelog without bumping the version. This is useful for when you are picking up after the changie batch has already completed, but need to re\-run the changie merge.
+
+## type [Job](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L13)
 
 Job is a namespace to contain chained sets of automation actions, to reduce the need to chain many commands together for common workflows.
 
@@ -59,7 +121,7 @@ Job is a namespace to contain chained sets of automation actions, to reduce the 
 type Job mg.Namespace
 ```
 
-### func \(Job\) [Redeploy](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L27>)
+### func \(Job\) [Redeploy](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L27)
 
 ```go
 func (Job) Redeploy()
@@ -67,7 +129,7 @@ func (Job) Redeploy()
 
 Redeploy removes kubernetes resources and helm charts and then redeploys with log streaming by default.
 
-### func \(Job\) [Setup](<https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L16>)
+### func \(Job\) [Setup](https://github.com/DelineaXPM/dsv-k8s-sidecar/blob/main/magefiles/jobs.mage.go#L16)
 
 ```go
 func (Job) Setup()
@@ -75,6 +137,4 @@ func (Job) Setup()
 
 Setup initializes all the required steps for the cluster creation, initial helm chart copies, and kubeconfig copies.
 
-
-
-Generated by [gomarkdoc](<https://github.com/princjef/gomarkdoc>)
+Generated by [gomarkdoc](https://github.com/princjef/gomarkdoc)

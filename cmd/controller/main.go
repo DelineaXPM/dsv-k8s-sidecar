@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -29,22 +28,17 @@ var (
 	keyDir     = util.EnvString("KEY_DIR", "/tmp/keys/")
 	serverCert = keyDir + util.EnvString("SERVER_CRT", "cert.pem")
 	serverKey  = keyDir + util.EnvString("SERVER_KEY", "key.pem")
-
-	serverTokenCert = keyDir + util.EnvString("SERVER_CRT", "certtoken.pem")
-	serverTokenKey  = keyDir + util.EnvString("SERVER_KEY", "keytoken.pem")
 )
 
 func main() {
-	var tenant, clientId, clientSecret, port, authport, authType, logLevel string
 
-	flag.StringVar(&tenant, "tenant", "", "Required tenant name")
-	flag.StringVar(&authType, "auth-type", "", "Required authtype (client_credentials, certificate)")
-	flag.StringVar(&clientId, "client-id", "", "Client credential id Required, if authtype client_credentials")
-	flag.StringVar(&clientSecret, "client-secret", "", "Client credential proxy, Required if authtype client_credentials")
-	flag.StringVar(&port, "port", ":3000", "Port to run on")
-	flag.StringVar(&authport, "auth-port", ":8080", "Auth Port to run on")
-	flag.StringVar(&logLevel, "log-level", "error", "Log Levels: panic,fatal,error,warn,info,debug,trace")
-	flag.Parse()
+	tenant := os.Getenv("TENANT")
+	authType := os.Getenv("AUTH_TYPE")
+	clientID := os.Getenv("CLIENT_ID")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	port := util.EnvString("PORT", ":3000")
+	authport := util.EnvString("AUTH_PORT", ":8080")
+	logLevel := util.EnvString("LOG_LEVEL", "error")
 
 	level, err := log.ParseLevel(logLevel)
 	if err != nil {
@@ -57,12 +51,12 @@ func main() {
 		os.Exit(2)
 	}
 
-	if strings.ToLower(authType) == clientCredentials && (clientId == "" || clientSecret == "") {
+	if strings.ToLower(authType) == clientCredentials && (clientID == "" || clientSecret == "") {
 		log.Error("Required flags (client-id, client-secret) are missing")
 		os.Exit(2)
 	}
 
-	secretClient := secrets.CreateSecretClient(tenant, clientId, clientSecret, authType)
+	secretClient := secrets.CreateSecretClient(tenant, clientID, clientSecret, authType)
 	secretServer := secrets.NewSecretServer(secretClient)
 
 	registry := pods.NewPodRegistry(tenant, os.Getenv("SIDECAR_NAMESPACE"))
@@ -94,18 +88,21 @@ func main() {
 		log.Info("Listening on port " + port)
 		errs <- grpcServer.Serve(lis)
 	}()
+
 	go func() {
 		router := mux.NewRouter().StrictSlash(true)
 		router.HandleFunc("/auth", authHandler.GetToken).Methods("POST")
 		http.Handle("/", router)
-		if _, err := os.Stat(serverTokenCert); err != nil {
-			log.Info("Auth Listening on port over TCP" + authport)
+		if _, err := os.Stat(serverCert); err != nil {
+			log.Info("Auth Listening on port over TCP: " + authport)
 			errs <- http.ListenAndServe(authport, nil)
 			os.Exit(1)
 		}
-		log.Info("Auth Listening on port TLS" + authport)
-		errs <- http.ListenAndServeTLS(":443", serverTokenCert, serverTokenKey, nil)
+		log.Info("Auth Listening on port TLS: " + authport)
+
+		errs <- http.ListenAndServeTLS(":443", serverCert, serverKey, nil)
 	}()
+
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)

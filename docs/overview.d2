@@ -1,0 +1,47 @@
+k8: Kubernetes {
+  icon: https://icons.terrastruct.com/azure%2FContainer%20Service%20Color%2FKubernetes%20Services.svg
+  style: {
+    font-size: 28
+  }
+
+  namespace-controller: {
+    DSVController
+  }
+
+  namespace-sidecar: {
+    UsersPod: {
+      UserContainer
+      DSVSidecar
+    }
+  }
+
+}
+# https://docs.thycotic.com/dsv/current/integrations/kubernetes/kubernetes-sidecar
+
+dsv: {
+  shape: cloud
+}
+
+
+# Upon Startup Behavior
+# Controller Behavior
+k8.DSVController -> dsv: https token api/token
+
+# Sidecar Behavior
+k8.UsersPod.DSVSidecar -> k8.DSVController: grpc
+# : |md
+
+# - grpc reaches out to broker on startup
+# - broker returns a JWT token for the sidecar (nonexpiring).
+# This is a unique token for the sidecar communication with the broker that contains metadata as well, indentifying itself.
+# |
+
+# Syncing Behavior
+k8.UsersPod.DSVSidecar -> k8.DSVController
+# |md
+# - Every `n` minutes, using the gRPC connection, get the secret configured in the chart values, which might pull from dsv or might already be cached.
+# - This is not done on startup, but on the cron.
+# - The interval for the controller is the interval to reach out to DSV for new updates on a secret.
+# - The interval for the sidecar is the interval to check the controller for updates from it's cache.
+# - The controller is forcibly refreshing the cache every `n` minutes, no version diff or comparison is done.
+# |

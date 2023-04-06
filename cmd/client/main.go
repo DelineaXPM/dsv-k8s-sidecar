@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
@@ -15,29 +14,23 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-const controllerServiceName = "dsv-broker.%s:80"
+const controllerServiceName = "dsv-k8s-controller.%s:80"
 
-var (
-	keyDir          = util.EnvString("KEY_DIR", "/tmp/keys/")
-	serverCert      = keyDir + util.EnvString("SERVER_CRT", "ca.pem")
-	serverTokenCert = keyDir + util.EnvString("SERVER_CRT", "catoken.pem")
-)
+var keyDir = util.EnvString("KEY_DIR", "/tmp/keys/") //nolint:gochecknoglobals // no other possibility
 
 func main() {
-	var logLevel string
-	flag.StringVar(&logLevel, "log-level", "error", "Log Levels: panic,fatal,error,warn,info,debug,trace")
-	flag.Parse()
+
+	logLevel := os.Getenv("LOG_LEVEL")
+	name := os.Getenv("POD_NAME")
+	namespace := os.Getenv("POD_NAMESPACE")
+	podIP := os.Getenv("POD_IP")
+	brokerNamespace := os.Getenv("BROKER_NAMESPACE")
 
 	level, lErr := log.ParseLevel(logLevel)
 	if lErr != nil {
 		level = log.ErrorLevel
 	}
 	log.SetLevel(level)
-
-	name := os.Getenv("POD_NAME")
-	namespace := os.Getenv("POD_NAMESPACE")
-	ip := os.Getenv("POD_IP")
-	brokerNamespace := os.Getenv("BROKER_NAMESPACE")
 
 	if brokerNamespace == "" {
 		brokerNamespace = namespace
@@ -46,7 +39,7 @@ func main() {
 	log.WithFields(log.Fields{
 		"podName":         name,
 		"podNamespace":    namespace,
-		"podIp":           ip,
+		"podIp":           podIP,
 		"brokerNamespace": brokerNamespace,
 	}).Info("Client started")
 
@@ -55,12 +48,13 @@ func main() {
 		err   error
 	)
 
-	if _, err = os.Stat(serverTokenCert); err != nil {
-		log.Info("Connecting over TCP: token")
-		token, err = auth.GetToken(namespace+"/"+name, ip, brokerNamespace)
+	serverCert := keyDir + util.EnvString("SERVER_CRT", "cert.pem")
+	if _, err = os.Stat(serverCert); err != nil {
+		log.Info("Connecting over TCP with token")
+		token, err = auth.GetToken(namespace+"/"+name, podIP, brokerNamespace)
 	} else {
-		log.Info("Connecting with TLS: token")
-		token, err = auth.GetTLsToken(namespace+"/"+name, ip, brokerNamespace, serverTokenCert)
+		log.Info("Connecting with TLS with token")
+		token, err = auth.GetTLsToken(namespace+"/"+name, podIP, brokerNamespace, serverCert)
 	}
 	if err != nil {
 		log.Fatalf("Unable to get token: %s", err)
@@ -86,9 +80,9 @@ func getGRPCConnection(token credentials.PerRPCCredentials, brokerNamespace stri
 		err  error
 	)
 
-	creds, err := credentials.NewClientTLSFromFile(serverCert, "")
+	creds, err := credentials.NewClientTLSFromFile(keyDir+util.EnvString("SERVER_CRT", "cert.pem"), "")
 	if err != nil {
-		log.Warn("Failed to get certificate keys: starting the server unsecure: ....", err.Error())
+		log.Warn("Failed to get certificate keys: starting the server insecure: ", err.Error())
 		conn, err = grpc.Dial(url, grpc.WithInsecure(), grpc.WithPerRPCCredentials(token))
 	} else {
 		conn, err = grpc.Dial(url, grpc.WithTransportCredentials(creds), grpc.WithPerRPCCredentials(token), grpc.WithWaitForHandshake())

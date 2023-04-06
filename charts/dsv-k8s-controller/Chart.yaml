@@ -1,0 +1,36 @@
+---
+apiVersion: v2
+name: dsv-k8s-controller
+description: |
+  A Helm chart for the Delinea DevOps Secrets Vault (DSV) k8 sidecar broker.
+  This can be installed once, or split up per namespace.
+  To use this you will need to use the helm chart for the `dsv-k8s-sidecar` for your service.
+
+  Install directly with helm via:
+
+  ```shell
+  NAMESPACE='dsv'
+  IMAGE_REPOSITORY='docker.io/delineaxpm/dsv-k8s-controller'
+
+  helm install
+      --namespace $NAMESPACE
+      --create-namespace \
+      --set image.repository=${IMAGE_REPOSITORY} \
+      --atomic \
+      --timeout "5m" \
+      dsv-k8s-controller ./charts/dsv-k8s-controller
+  ```
+
+icon: https://delinea.com/hubfs/Delinea/icons/product%20icons/delinea-icon-platform.svg
+keywords:
+  - Delinea
+  - DevOps
+  - DSV
+  - secrets
+  - vault
+type: application
+# WARNING: Version should be bumped by changie, not manually.
+version: v1.0.0
+appVersion: latest
+maintainers:
+  - name: Delinea DSV Team

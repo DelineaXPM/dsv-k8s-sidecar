@@ -21,7 +21,7 @@ type EnvTestSuite struct {
 }
 
 func TestEnvSuite(t *testing.T) {
-	env.SecretFile = "thy.json"
+	env.SecretFile = "dsv.json"
 	suite.Run(t, new(EnvTestSuite))
 }
 

@@ -1,5 +1,5 @@
 ---
-project_name: dsv-sidecar
+project_name: dsv-k8s-sidecar
 dist: .artifacts
 env:
   - GITHUB_TOKEN=''
@@ -13,8 +13,8 @@ before:
 builds:
   - id: dsv-controller
     binary: dsv-controller
-    main: cmd/controller/main.go
-    mod_timestamp: "{{ .CommitTimestamp }}"
+    main: ./cmd/controller/main.go
+    mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
       - -s -w
       - -X main.version={{ .Summary }}
@@ -24,10 +24,10 @@ builds:
     goos: [linux]
     goarch: [amd64]
 
-  - id: dsv-client
-    binary: dsv-client
-    main: cmd/client/main.go
-    mod_timestamp: "{{ .CommitTimestamp }}"
+  - id: dsv-k8s-sidecar
+    binary: dsv-k8s-sidecar
+    main: ./cmd/client/main.go
+    mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
       - -s -w
       - -X main.version={{ .Summary }}
@@ -52,7 +52,7 @@ checksum:
   algorithm: sha256
   disable: false
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  name_template: '{{ incpatch .Version }}-next'
 changelog:
   skip: false
   sort: asc
@@ -61,32 +61,32 @@ changelog:
     - title: Features
       regexp: "^.*feat[(\\w)]*:+.*$"
       order: 0
-    - title: "Fixes"
+    - title: 'Fixes'
       regexp: "^.*fix[(\\w)]*:+.*$"
       order: 1
-    - title: "CI & Chore"
+    - title: 'CI & Chore'
       regexp: "^.*(fix|chore|build)[(\\w)]*:+.*$"
       order: 2
     - title: Others
       order: 999
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
-      - "^style:"
+      - '^docs:'
+      - '^test:'
+      - '^style:'
 sboms:
   - artifacts: binary
     documents:
-      - "${artifact}.spdx.sbom"
+      - '${artifact}.spdx.sbom'
 dockers:
   - id: docker-publish-controller
     ids: [dsv-controller]
     goos: linux
     image_templates:
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Tag }}{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Version }}{{ end }}'
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:latest{{ end }}'
     skip_push: false
-    dockerfile: ./docker/Dockerfile.controller.chainguard
+    dockerfile: ./docker/Dockerfile.controller
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
@@ -95,13 +95,13 @@ dockers:
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
   - id: docker-publish-client
-    ids: [dsv-client]
+    ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-client:{{ .Tag }}{{ end }}'
-      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-client:latest{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:{{ .Version }}{{ end }}'
+      - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-sidecar:latest{{ end }}'
     skip_push: false
-    dockerfile: ./docker/Dockerfile.client.chainguard
+    dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
@@ -115,10 +115,10 @@ dockers:
     ids: [dsv-controller]
     goos: linux
     image_templates:
-      - "dsv-k8s-controller:{{ .Tag }}"
-      - "dsv-k8s-controller:latest" # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+      - 'dsv-k8s-controller:{{ .Version }}'
+      - 'dsv-k8s-controller:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
-    dockerfile: ./docker/Dockerfile.controller.chainguard
+    dockerfile: ./docker/Dockerfile.controller
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
@@ -126,17 +126,16 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.version="{{ .Tag }}"
 
   # local builds
   - id: local-docker-images-client
-    ids: [dsv-client]
+    ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - "dsv-k8s-client:{{ .Tag }}"
-      - "dsv-k8s-client:latest" # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+      - 'dsv-k8s-sidecar:{{ .Version }}'
+      - 'dsv-k8s-sidecar:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
-    dockerfile: ./docker/Dockerfile.client.chainguard
+    dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
@@ -144,4 +143,3 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.version={{.Version}}
-      - --label=org.opencontainers.image.version="{{ .Tag }}"

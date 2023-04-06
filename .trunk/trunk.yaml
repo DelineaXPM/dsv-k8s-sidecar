@@ -8,6 +8,7 @@ actions:
     - trunk-fmt-pre-commit
     - go-mod-vendor
     - gotestsum
+    - helm-lint
   definitions:
     - id: go-mod-vendor
       description: When go mod or sum is updated, go vendoring should be run to ensure it's consistent.
@@ -15,35 +16,45 @@ actions:
       run: mod vendor
       triggers:
         - files: [go.mod]
+    - id: helm-lint
+      runtime: go
+      description: run helm lint on pre-push
+      run: 'helm lint --quiet --strict charts/*'
+      triggers:
+        - git_hooks: [pre-push]
     - id: gotestsum
       runtime: go
       description: run go tests on pre-push
-      run: gotestsum --format pkgname -- -shuffle=on  -tags integration ./...
+      run: 'gotestsum --format dots-v2 -- -shuffle=on  -tags integration ./...; echo "testing done"'
+      # interactive: true
       triggers:
         - git_hooks: [pre-push]
 version: 0.1
 runtimes:
   enabled:
-    - node@16.14.2
-    - python@3.10.3
+    - node@18.12.1
+    - python@3.10.8
     - go@1.19 # make sure this matches what's in go.mod for this to work correctly.
 cli:
-  version: 1.4.1
+  version: 1.7.0
 
 lint:
   enabled:
-    - actionlint@1.6.23
+    - oxipng@8.0.0
+    - svgo@3.0.2
+    - renovate@35.32.2
+    - actionlint@1.6.24
     - git-diff-check@SYSTEM
-    - gitleaks@8.15.3
+    - gitleaks@8.16.2
     - gofmt@1.19.3
-    - golangci-lint@1.51.1
+    - golangci-lint@1.52.2
     - hadolint@2.12.0
     - markdownlint@0.33.0
-    - prettier@2.8.3
+    - prettier@2.8.7
     - shellcheck@0.9.0
     - shfmt@3.5.0
     - taplo@0.7.0
-    - yamllint@1.29.0
+    - yamllint@1.30.0
   threshold:
     - linters: [markdownlint]
       level: high
@@ -58,5 +69,5 @@ lint:
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.9
+      ref: v0.0.13
       uri: https://github.com/trunk-io/plugins

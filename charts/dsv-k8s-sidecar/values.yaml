@@ -1,0 +1,90 @@
+---
+# Default values for the Delina DevOps Secrets Vault (DSV) Secrets sidecar.
+
+# -- replicaCount
+# @default -- 1
+replicaCount: 1
+# -- containername is the name of the user provided container
+# *REQUIRED*
+containername:
+# -- image is the image configuration for the user provided service.
+# *REQUIRED*
+image:
+  # -- repository is the name of the fully qualified image
+  # *REQUIRED*
+  repository:
+  # -- pullPolicy is the image pull policy
+  # @default -- IfNotPresent
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  # @default -- '' (empty)
+  tag:
+
+nameOverride: ''
+fullnameOverride: ''
+
+# -- podAnnotations is the pod annotations for the controller
+#
+# *REQUIRED*
+podAnnotations:
+  # -- dsv is the tenant name in DSV
+  # *REQUIRED FIELD*
+  dsv:
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+# -- securityContext is the security context for the controller.
+# This uses chainguard static nonroot based image.
+# Reference: https://edu.chainguard.dev/chainguard/chainguard-images/reference/static/overview/
+securityContext:
+  # -- readOnlyRootFilesystem is the read only root file system flag.
+  # @default -- true
+  readOnlyRootFilesystem: true
+  # -- runAsNonRoot is the run as non root flag.
+  # @default -- true
+  runAsNonRoot: true
+  # -- runAsUser is the run as user.
+  # @default -- 65532 (from chainguard static image)
+  runAsUser: 65532
+  # -- runAsGroup is the run as group.
+  # @default -- 65532 (from chainguard static image)
+  runAsGroup: 65532
+
+resources: {}
+# limits:
+#   cpu: 500m
+#   memory: 512Mi
+# requests:
+#   cpu: 500m
+#   memory: 512Mi
+
+env:
+  # -- refreshTime is the time interval between refreshes of the secrets
+  # @default -- 8543
+  refreshTime: 5s
+  # -- secrets is a list of secrets to be injected into the pod.
+  # This should be comma delimited if providing more than one. For example `dev:mysecret:mypath,dev:mysecret2:mypath2`.
+  # *REQUIRED FIELD*
+  secrets:
+  # -- logLevel is the log level for the sidecar
+  # @default -- info
+  logLevel: info
+  # -- brokerNamespace is the namespace of the broker, which is only required if the broker is not in the same namespace as the sidecar
+  # @default -- ""
+  brokerNamespace: ''
+
+# -- sidecarimage is DSV Sidecar Image attached to target pod
+sidecarimage:
+  # -- repository is the name of the fully qualified image
+  # @default -- docker.io/delineaxpm/dsv-k8s-sidecar
+  repository: docker.io/delineaxpm/dsv-k8s-sidecar
+  # -- Overrides the image tag whose default is the chart appVersion.
+  # Provide a specific tag version to override, such as latest or valid semver version for the image.
+  # The chart version is identical for both sidecar and controller charts, so this can be left empty to use the Charts.yaml version without issue.
+  # -- @default '' (empty)
+  tag: ''
+  # -- pullPolicy is the image pull policy
+  # @default -- IfNotPresent
+  pullPolicy: IfNotPresent

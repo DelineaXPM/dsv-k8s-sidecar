@@ -24,15 +24,46 @@ const (
 
 	// CacheManifestDirectory is the directory where the cached k8 manifests are copied to.
 	CacheManifestDirectory = ".cache/manifests"
+
+	// CacheCertDirectory is the directory where the cached certs are copied to.
+	CacheCertDirectory = ".cache/certs"
+
+	// CacheChartsDirectory is the directory where the cached helm values file is copied to.
+	CacheChartsDirectory = ".cache/charts"
 )
 
 const (
-	// KindClusterName is the name of the kind cluster.
+	// KindClusterName is the name of the kind/minikube cluster.
 	KindClusterName = "dsvtest"
-	// KindClusterName is the name of the kind cluster.
-	KindContextName = "kind-dsvtest"
+	// KindClusterName is the name of the kind/minikube cluster.
+	KindContextName = "dsvtest"
 	// KubeconfigPath is the path to the kubeconfig file for this project, which is cached locally.
 	Kubeconfig = ".cache/config"
 	// KubectlNamespace is the namespace used for all kubectl commands, so that they don't operate in default or other namespace by accident.
 	KubectlNamespace = "dsv"
+)
+
+const (
+	// HelmTimeout is the timeout for helm commands using the CLI.
+	HelmTimeout = "5m"
+	// ChartsDirectory is the directory where the helm charts are placed, in sub directories.
+	ChartsDirectory = "charts"
+	// SternFilter is the filter for dsv-filter-name for streaming logs easily.
+	SternFilter = "dsv-k8s-controller, dsv-k8s-sidecar"
+)
+
+// Cert prefixes
+const (
+	// PrefixSidecarToControllerToken is the prefix for the cert files so it's easy to identify which one.
+	PrefixSidecarToControllerToken = "sidecartobrokentoken"
+	// PrefixSidecarToControllerGRPC is the prefix for the cert files so it's easy to identify which one.
+	PrefixSidecarToControllerGRPC = "sidecartobrokerGRPC"
+)
+
+// Diagram and docs
+const (
+	// D2OverviewDiagram is the path to the d2 file for the overview diagram.
+	D2OverviewDiagram = "./docs/overview.d2"
+	// D2OverviewDiagramSVG is the path to the png file for the overview diagram.
+	D2OverviewDiagramSVG = "./docs/overview.svg"
 )
