@@ -225,11 +225,16 @@ func (c *secretClient) updateToken() {
 
 func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretClientError) {
 	val := c.cache.Get(secret)
-	if val == nil {
-		log.WithField("secret", secret).Info("Cache miss")
-		return c.fetchSecretFromDSV(secret)
+	if val != nil {
+		ret, ok := val.(*SecretResponseData)
+		if ok {
+			return ret, nil
+		}
+		log.WithField("secret", secret).Infof("Unexpected type in cache: %T", val)
 	}
-	return val.(*SecretResponseData), nil
+
+	log.WithField("secret", secret).Info("Cache miss")
+	return c.fetchSecretFromDSV(secret)
 }
 
 func (c *secretClient) fetchSecretFromDSV(secret string) (*SecretResponseData, *SecretClientError) {
