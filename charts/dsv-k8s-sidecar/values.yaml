@@ -27,9 +27,9 @@ fullnameOverride: ''
 #
 # *REQUIRED*
 podAnnotations:
-  # -- dsv.delinea.io/tenant is the tenant name in DSV
+  # -- dsv is the tenant name in DSV
   # *REQUIRED FIELD*
-  dsv.delinea.io/tenant:
+  dsv:
 
 podSecurityContext:
   {}

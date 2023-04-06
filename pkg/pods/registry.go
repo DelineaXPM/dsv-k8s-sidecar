@@ -67,7 +67,7 @@ func NewPodRegistry(tenant, namespace string) PodRegistry {
 				continue
 			}
 
-			t, exists := p.Metadata.Annotations["dsv.delinea.io/tenant"]
+			t, exists := p.Metadata.Annotations["dsv"]
 			if !exists || tenant != t {
 				continue
 			}
