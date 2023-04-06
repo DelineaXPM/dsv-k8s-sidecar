@@ -122,7 +122,7 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 		baseAuthURL:         baseAuthURL,
 		baseSecretURL:       baseSecretURL,
 		initiateCertAuthURL: initiateCertAuthURL,
-		authType:            authType,
+		authType:            strings.ToLower(authType),
 	}
 
 	scl.updateToken()
@@ -163,7 +163,7 @@ func (c *secretClient) setError(status int, err error) {
 // TODO Refresh Token
 func (c *secretClient) updateToken() {
 	var b *authBody
-	switch strings.ToLower(c.authType) {
+	switch c.authType {
 	case clientCreds:
 		b = &authBody{
 			Type:   clientCreds,
