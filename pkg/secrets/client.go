@@ -90,7 +90,7 @@ type secretClient struct {
 }
 
 func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //nolint:ireturn //ireturn: by design this is ok to keep like this.
-	baseURL := util.EnvString("DSV_API_URL", "https://%s.qabambe.com/v1")
+	baseURL := util.EnvString("DSV_API_URL", "https://%s.secretsvaultcloud.com/v1")
 	baseAuthURL := baseURL + "/token"
 	baseSecretURL := baseURL + "/secrets/%s"
 	initiateCertAuthURL := baseURL + "/certificate/auth"
