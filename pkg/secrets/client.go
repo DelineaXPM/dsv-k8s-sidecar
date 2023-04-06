@@ -213,12 +213,12 @@ func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretCli
 	val := c.cache.Get(secret)
 	if val == nil {
 		log.WithField("secret", secret).Info("Cache miss")
-		return c.getSecretFromBambe(secret)
+		return c.fetchSecretFromDSV(secret)
 	}
 	return val.(*SecretResponseData), err
 }
 
-func (c *secretClient) getSecretFromBambe(secret string) (*SecretResponseData, *SecretClientError) {
+func (c *secretClient) fetchSecretFromDSV(secret string) (*SecretResponseData, *SecretClientError) {
 	// If we have an auth error return.
 	if c.error != nil {
 		return nil, c.error
@@ -275,7 +275,7 @@ func (c *secretClient) updateCache() {
 	for _, key := range c.cache.KeySet() {
 		key := key
 		go func() {
-			val, err := c.getSecretFromBambe(key)
+			val, err := c.fetchSecretFromDSV(key)
 			if err != nil {
 				log.WithField("error", err).Error("error updating cache")
 				return
