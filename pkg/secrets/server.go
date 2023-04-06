@@ -29,7 +29,6 @@ func (s *SecretServer) GetSecret(ctx context.Context, secret *Secret) (*Secret, 
 		return nil, errors.New("Error from API")
 	}
 
-	var val string
 	out, err := json.Marshal(result.Value)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -38,12 +37,12 @@ func (s *SecretServer) GetSecret(ctx context.Context, secret *Secret) (*Secret, 
 		}).Error("unable to marshall value")
 		return nil, errors.New("error unmarshalling data")
 	}
-	val = string(out)
-	//Don't include attributes, can't be that flexible with grpc
+
+	// Don't include attributes, can't be that flexible with grpc.
 	resp := &Secret{
 		Id:    result.ID,
 		Path:  result.Path,
-		Value: val,
+		Value: string(out),
 	}
 
 	return resp, nil
