@@ -19,7 +19,6 @@ import (
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/cache"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/util"
 
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -292,13 +291,13 @@ func (c *secretClient) SetSecretURL(url string) {
 func (c *secretClient) initiateCertAuth() (string, string, error) {
 	tlsCert, err := ioutil.ReadFile(authByCertTLSCert)
 	if err != nil {
-		logrus.WithField("error", err.Error()).Error("Unable to open auth by cert tls cert file")
+		log.WithField("error", err.Error()).Error("Unable to open auth by cert tls cert file")
 		return "", "", err
 	}
 
 	tlsKey, err := ioutil.ReadFile(authByCertTLSKey)
 	if err != nil {
-		logrus.WithField("error", err.Error()).Error("unable to open auth by cert tls key file")
+		log.WithField("error", err.Error()).Error("unable to open auth by cert tls key file")
 		return "", "", err
 	}
 
