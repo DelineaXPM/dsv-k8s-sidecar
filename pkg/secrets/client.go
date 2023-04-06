@@ -11,8 +11,8 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -22,17 +22,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// List of supported authentication methods.
 const (
-	clientCredentials = "client_credentials"
-	cert              = "cert"
-	certificate       = "certificate"
+	clientCreds = "client_credentials"
+	cert        = "cert"
+	certificate = "certificate"
+)
+
+// Paths to a client certificate and private key for authentication by certificate.
+const (
 	authByCertTLSKey  = "/etc/dsv/certs/tls.key"
 	authByCertTLSCert = "/etc/dsv/certs/tls.crt"
 )
 
+// Configurations for background goroutine.
+const (
+	defaultTokenUpdPeriod = 30 * time.Minute
+	defaultCacheUpdPeriod = 15 * time.Minute
+)
+
 var (
-	refreshTimeString = util.EnvString("REFRESH_TIME", "15m")
-	tr                = &http.Transport{
+	tr = &http.Transport{
 		MaxIdleConns:    10,
 		IdleConnTimeout: 30 * time.Second,
 	}
@@ -94,21 +104,20 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 	baseSecretURL := baseURL + "/secrets/%s"
 	initiateCertAuthURL := baseURL + "/certificate/auth"
 
-	cacheRefreshTime, err := time.ParseDuration(refreshTimeString)
-	if err != nil {
-		panic("Bad Refresh Time Specified")
+	cacheUpdPeriod := defaultCacheUpdPeriod
+	if raw := os.Getenv("REFRESH_TIME"); raw != "" {
+		var err error
+		cacheUpdPeriod, err = time.ParseDuration(raw)
+		if err != nil {
+			panic("Bad Refresh Time Specified")
+		}
 	}
-
-	// Refresh token reset
-	ticker := time.NewTicker(30 * time.Minute)      //nolint:gomnd // allow constant value
-	cacheTicker := time.NewTicker(cacheRefreshTime) // Set refresh time through env?
-	q := make(chan bool)
 
 	scl := &secretClient{
 		tenant:              tenant,
 		id:                  id,
 		secret:              secret,
-		quit:                q,
+		quit:                make(chan bool),
 		cache:               cache.CreateMemoryCache(),
 		baseAuthURL:         baseAuthURL,
 		baseSecretURL:       baseSecretURL,
@@ -119,17 +128,22 @@ func CreateSecretClient(tenant, id, secret, authType string) SecretClient { //no
 	scl.updateToken()
 
 	go func() {
-		defer func() {
-			ticker.Stop()
-			cacheTicker.Stop()
-			log.Info("exited timer")
-		}()
+		defer log.Info("exited timer")
+
+		tokenTicker := time.NewTicker(defaultTokenUpdPeriod)
+		defer tokenTicker.Stop()
+
+		cacheTicker := time.NewTicker(cacheUpdPeriod)
+		defer cacheTicker.Stop()
+
 		for {
 			select {
-			case <-ticker.C:
+			case <-tokenTicker.C:
 				go scl.updateToken()
+
 			case <-cacheTicker.C:
 				go scl.updateCache()
+
 			case <-scl.quit:
 				return
 			}
@@ -150,9 +164,9 @@ func (c *secretClient) setError(status int, err error) {
 func (c *secretClient) updateToken() {
 	var b *authBody
 	switch strings.ToLower(c.authType) {
-	case clientCredentials:
+	case clientCreds:
 		b = &authBody{
-			Type:   clientCredentials,
+			Type:   clientCreds,
 			ID:     c.id,
 			Secret: c.secret,
 		}
@@ -227,7 +241,7 @@ func (c *secretClient) fetchSecretFromDSV(secret string) (*SecretResponseData, *
 	url := fmt.Sprintf(c.baseSecretURL, c.tenant, secret)
 	log.WithField("url", url).Info("Fetching Secret")
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Error creating request")
 		c.setError(http.StatusInternalServerError, err)
@@ -290,13 +304,13 @@ func (c *secretClient) SetSecretURL(url string) {
 }
 
 func (c *secretClient) initiateCertAuth() (string, string, error) {
-	tlsCert, err := ioutil.ReadFile(authByCertTLSCert)
+	tlsCert, err := os.ReadFile(authByCertTLSCert)
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Unable to open auth by cert tls cert file")
 		return "", "", err
 	}
 
-	tlsKey, err := ioutil.ReadFile(authByCertTLSKey)
+	tlsKey, err := os.ReadFile(authByCertTLSKey)
 	if err != nil {
 		log.WithField("error", err.Error()).Error("unable to open auth by cert tls key file")
 		return "", "", err
@@ -333,7 +347,7 @@ func (c *secretClient) initiateCertAuth() (string, string, error) {
 		return "", "", err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(serRequest))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(serRequest))
 	if err != nil {
 		log.WithField("error", err.Error()).Error("error creating challenge initiate cert auth request")
 		c.setError(http.StatusInternalServerError, err)
