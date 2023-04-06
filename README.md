@@ -21,7 +21,7 @@ Both the sidecar & controller have helm charts located in [charts](charts/) with
 - The controller chart expects input values that provide client credentials to connect to dsv.
 - When the sidecar comes online it must first call the auth endpoint using it's podname and ip address.
 
-![overview](docs/overview.svg)
+![overview](docs/original-diagram.png)
 
 ## FAQ
 

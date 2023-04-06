@@ -34,7 +34,6 @@ strategy:
     # -- maxSurge is the maximum number of pods that can be created over the desired number of pods
     # @default -- 1
     maxSurge: 1
-
 podAnnotations: {}
 
 podSecurityContext:

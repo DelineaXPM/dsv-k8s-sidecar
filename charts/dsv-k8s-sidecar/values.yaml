@@ -23,7 +23,13 @@ image:
 nameOverride: ''
 fullnameOverride: ''
 
-podAnnotations: {}
+# -- podAnnotations is the pod annotations for the controller
+#
+# *REQUIRED*
+podAnnotations:
+  # -- dsv.delinea.io/tenant is the tenant name in DSV
+  # *REQUIRED FIELD*
+  dsv.delinea.io/tenant:
 
 podSecurityContext:
   {}
