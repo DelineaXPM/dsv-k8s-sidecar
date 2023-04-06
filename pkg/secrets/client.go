@@ -231,6 +231,7 @@ func (c *secretClient) GetSecret(secret string) (*SecretResponseData, *SecretCli
 			return ret, nil
 		}
 		log.WithField("secret", secret).Infof("Unexpected type in cache: %T", val)
+		// Continue as if it is "cache miss" case.
 	}
 
 	log.WithField("secret", secret).Info("Cache miss")
