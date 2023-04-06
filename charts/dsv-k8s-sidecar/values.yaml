@@ -78,8 +78,8 @@ env:
 # -- sidecarimage is DSV Sidecar Image attached to target pod
 sidecarimage:
   # -- repository is the name of the fully qualified image
-  # @default -- docker.io/delinaxpm/dsv-k8s-sidecar
-  repository: docker.io/delinaxpm/dsv-k8s-sidecar
+  # @default -- docker.io/delineaxpm/dsv-k8s-sidecar
+  repository: docker.io/delineaxpm/dsv-k8s-sidecar
   # -- Overrides the image tag whose default is the chart appVersion.
   # Provide a specific tag version to override, such as latest or valid semver version for the image.
   # The chart version is identical for both sidecar and controller charts, so this can be left empty to use the Charts.yaml version without issue.

@@ -8,8 +8,8 @@ replicaCount: 1
 # -- image is the image configuration for the controller
 image:
   # -- repository is the name of the fully qualified image
-  # @default -- docker.io/delinaxpm/dsv-k8s-controller
-  repository: dsv-k8s-controller
+  # @default -- docker.io/delineaxpm/dsv-k8s-controller
+  repository: docker.io/delineaxpm/dsv-k8s-controller
   # -- pullPolicy is the image pull policy
   # @default -- IfNotPresent
   pullPolicy: IfNotPresent
