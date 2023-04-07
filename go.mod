@@ -8,7 +8,7 @@ require (
 	github.com/ericchiang/k8s v1.2.0
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.2.0
-	github.com/gorilla/mux v1.6.2
+	github.com/gorilla/mux v1.8.0
 	github.com/magefile/mage v1.14.0
 	github.com/pterm/pterm v0.12.58
 	github.com/sheldonhull/magetools v1.0.0
@@ -25,7 +25,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gookit/color v1.5.3 // indirect
-	github.com/gorilla/context v1.1.1 // indirect
 	github.com/itchyny/gojq v0.12.7 // indirect
 	github.com/itchyny/timefmt-go v0.1.3 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
