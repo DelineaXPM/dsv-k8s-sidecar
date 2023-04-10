@@ -18,10 +18,13 @@ Both the sidecar & controller have helm charts located in [charts](charts/) with
 
 ## How It Works
 
-- The controller chart expects input values that provide client credentials to connect to dsv.
-- When the sidecar comes online it must first call the auth endpoint using it's podname and ip address.
+See [Architecture](docs/architecture.md) for more detail.
 
-![overview](docs/original-diagram.png)
+The general concept is:
+
+- DSV Controller retrieves and caches secrets from DSV.
+- Authenticated sidecar pods communicate with a unique JWT to the DSV Controller requesting the desired secrets.
+- The secret is either read from the in-memory cache or retrieved if non-existent.
 
 ## FAQ
 
