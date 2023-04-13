@@ -189,7 +189,7 @@ func (c *secretClient) updateToken() {
 	log.WithField("url", url).Info("Fetching Token")
 	timeout := time.Duration(10 * time.Second)
 	body, err := json.Marshal(b)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		log.Error("Error creating request", err)
 		c.setError(http.StatusInternalServerError, err)

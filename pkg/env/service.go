@@ -54,30 +54,34 @@ func (a *environmentAgent) Run() <-chan error {
 	refreshTime, err := time.ParseDuration(refreshTimeString)
 	if err != nil {
 		log.Error("Invalid refresh time, defaulting to 15m")
-		refreshTime, _ = time.ParseDuration("15m")
+		refreshTime = 15 * time.Minute
 	}
-	log.Info("Running.....")
-	ticker := time.NewTicker(refreshTime)
-	errs := make(chan error)
+	log.Info("Running...")
 
 	a.UpdateEnv()
 	go func() {
-	UpdateLoop:
+		ticker := time.NewTicker(refreshTime)
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
 				go a.UpdateEnv()
 			case <-a.stop:
-				break UpdateLoop
+				return
 			}
 		}
 	}()
 
+	errs := make(chan error)
 	return errs
 }
 
 func (a *environmentAgent) UpdateEnv() {
 	a.write(a.fetch(a.vars))
+}
+
+func (a *environmentAgent) Close() {
+	a.stop <- true
 }
 
 func (a *environmentAgent) fetch(keys []string) chan struct {
@@ -164,6 +168,3 @@ func (a *environmentAgent) write(secrets chan struct {
 	return nil
 }
 
-func (a *environmentAgent) Close() {
-	a.stop <- true
-}
