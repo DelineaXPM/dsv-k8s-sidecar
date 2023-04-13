@@ -19,7 +19,6 @@ const controllerServiceName = "dsv-k8s-controller.%s:80"
 var keyDir = util.EnvString("KEY_DIR", "/tmp/keys/") //nolint:gochecknoglobals // no other possibility
 
 func main() {
-
 	logLevel := os.Getenv("LOG_LEVEL")
 	name := os.Getenv("POD_NAME")
 	namespace := os.Getenv("POD_NAMESPACE")

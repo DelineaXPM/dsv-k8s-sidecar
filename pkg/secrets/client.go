@@ -187,23 +187,29 @@ func (c *secretClient) updateToken() {
 
 	url := fmt.Sprintf(c.baseAuthURL, c.tenant)
 	log.WithField("url", url).Info("Fetching Token")
-	timeout := time.Duration(10 * time.Second)
+
 	body, err := json.Marshal(b)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
 	if err != nil {
-		log.Error("Error creating request", err)
+		log.Error("Marshal token request body: %v", err)
 		c.setError(http.StatusInternalServerError, err)
 		return
 	}
 
-	client := &http.Client{
-		Timeout: timeout,
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	if err != nil {
+		log.Error("Create token request: %v", err)
+		c.setError(http.StatusInternalServerError, err)
+		return
 	}
 	req.Header.Set("Content-Type", "application/json")
 
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Error("Error retrieving data", err)
+		log.Error("Token request: %v", err)
 		c.setError(http.StatusInternalServerError, err)
 		return
 	}

@@ -31,7 +31,6 @@ var (
 )
 
 func main() {
-
 	tenant := os.Getenv("TENANT")
 	authType := os.Getenv("AUTH_TYPE")
 	clientID := os.Getenv("CLIENT_ID")
@@ -60,7 +59,7 @@ func main() {
 	secretServer := secrets.NewSecretServer(secretClient)
 
 	registry := pods.NewPodRegistry(tenant, os.Getenv("SIDECAR_NAMESPACE"))
-	authService := auth.NewAuthService(envString("AUTH_SECRET", "Secret"), registry)
+	authService := auth.NewAuthService(util.EnvString("AUTH_SECRET", "Secret"), registry)
 	authHandler := auth.NewAuthHandler(authService)
 
 	lis, err := net.Listen("tcp", port)
@@ -91,7 +90,7 @@ func main() {
 
 	go func() {
 		router := mux.NewRouter().StrictSlash(true)
-		router.HandleFunc("/auth", authHandler.GetToken).Methods("POST")
+		router.HandleFunc("/auth", authHandler.GetToken).Methods(http.MethodPost)
 		http.Handle("/", router)
 		if _, err := os.Stat(serverCert); err != nil {
 			log.Info("Auth Listening on port over TCP: " + authport)
@@ -110,12 +109,4 @@ func main() {
 	}()
 
 	log.Infof("terminated %s", <-errs)
-}
-
-func envString(env, fallback string) string {
-	e := os.Getenv(env)
-	if e == "" {
-		return fallback
-	}
-	return e
 }
