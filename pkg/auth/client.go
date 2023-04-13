@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/util"
 
@@ -89,7 +89,7 @@ func GetTLsToken(name, ip, brokerNamespace, certFile string) (credentials.PerRPC
 		return nil, err
 	}
 
-	dat, err := ioutil.ReadFile(certFile)
+	dat, err := os.ReadFile(certFile)
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Error reading ca file")
 		return nil, err
