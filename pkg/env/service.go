@@ -167,4 +167,3 @@ func (a *environmentAgent) write(secrets chan struct {
 
 	return nil
 }
-
