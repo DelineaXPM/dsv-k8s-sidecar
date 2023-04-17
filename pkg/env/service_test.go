@@ -2,7 +2,7 @@ package env_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 
@@ -50,7 +50,7 @@ func (suite *EnvTestSuite) TestUpdateEnv() {
 
 	jsonFile, _ := os.Open(env.SecretFile)
 
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, _ := io.ReadAll(jsonFile)
 
 	var result map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &result)
