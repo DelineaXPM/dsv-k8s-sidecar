@@ -19,13 +19,12 @@ actions:
     - id: helm-lint
       runtime: go
       description: run helm lint on pre-push
-      run: 'helm lint --quiet --strict charts/*'
+      run: 'helm lint --quiet --strict charts/*; echo "✔️ helm lint"'
       triggers:
         - git_hooks: [pre-push]
     - id: gotestsum
-      runtime: go
       description: run go tests on pre-push
-      run: 'gotestsum --format dots-v2 -- -shuffle=on  -tags integration ./...; echo "testing done"'
+      run: 'echo "🧪 running gotestsum"; gotestsum --format pkgname-and-test-fails -- -shuffle=on  -tags integration ./...; echo "✔️ gotestsum"'
       # interactive: true
       triggers:
         - git_hooks: [pre-push]
@@ -42,7 +41,7 @@ lint:
   enabled:
     - oxipng@8.0.0
     - svgo@3.0.2
-    - renovate@35.32.2
+    - renovate@35.49.0
     - actionlint@1.6.24
     - git-diff-check@SYSTEM
     - gitleaks@8.16.2
@@ -69,5 +68,5 @@ lint:
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.13
+      ref: v0.0.15
       uri: https://github.com/trunk-io/plugins
