@@ -44,6 +44,9 @@ func (Changelog) Bump() error {
 	if err := sh.RunV("git", "add", ".changes/*"); err != nil {
 		return err
 	}
+	if err := sh.RunV("git", "add", "charts/**/Chart.yaml"); err != nil {
+		return err
+	}
 	if err := sh.RunV("git", "add", "CHANGELOG.md"); err != nil {
 		return err
 	}
