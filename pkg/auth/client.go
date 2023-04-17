@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/util"
 
@@ -37,7 +37,7 @@ func GetToken(name, ip, brokerNamespace string) (credentials.PerRPCCredentials, 
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Error creating request")
 		return nil, err
@@ -79,17 +79,17 @@ func GetTLsToken(name, ip, brokerNamespace, certFile string) (credentials.PerRPC
 
 	body, err := json.Marshal(b)
 	if err != nil {
-		log.WithField("error", err.Error()).Error("Error marshalling")
+		log.WithField("error", err.Error()).Error("Error marshaling")
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Error creating request")
 		return nil, err
 	}
 
-	dat, err := ioutil.ReadFile(certFile)
+	dat, err := os.ReadFile(certFile)
 	if err != nil {
 		log.WithField("error", err.Error()).Error("Error reading ca file")
 		return nil, err
