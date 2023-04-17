@@ -22,7 +22,7 @@ builds:
       - -X main.date={{ .Timestamp }}
       - -X main.builtBy=goreleaser
     goos: [linux]
-    goarch: [amd64]
+    goarch: [amd64, arm64]
 
   - id: dsv-k8s-sidecar
     binary: dsv-k8s-sidecar
@@ -35,7 +35,7 @@ builds:
       - -X main.date={{ .Timestamp }}
       - -X main.builtBy=goreleaser
     goos: [linux]
-    goarch: [amd64]
+    goarch: [amd64, arm64]
 
 archives:
   - id: binary
@@ -89,7 +89,7 @@ dockers:
     dockerfile: ./docker/Dockerfile.controller
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64
+      # - --platform=linux/amd64
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
@@ -104,7 +104,7 @@ dockers:
     dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64
+      # - --platform=linux/amd64
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
@@ -121,7 +121,7 @@ dockers:
     dockerfile: ./docker/Dockerfile.controller
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64
+      # - --platform=linux/amd64
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
@@ -138,7 +138,7 @@ dockers:
     dockerfile: ./docker/Dockerfile.sidecar
     use: buildx
     build_flag_templates:
-      - --platform=linux/amd64
+      # - --platform=linux/amd64
       - --label=org.opencontainers.image.created={{.Date}}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
