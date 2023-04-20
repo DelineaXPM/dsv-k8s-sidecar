@@ -38,6 +38,7 @@ func TestAuthHandler_GetToken(t *testing.T) {
 	underTest.GetToken(rr, req)
 
 	// Assert.
+	//nolint:bodyclose // The response body is ok not to close in this case.
 	resp := rr.Result()
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 
