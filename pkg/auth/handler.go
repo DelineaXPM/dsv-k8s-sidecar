@@ -39,14 +39,14 @@ func (h *authHandler) GetToken(w http.ResponseWriter, r *http.Request) {
 
 	responseBody, err := json.Marshal(resp)
 	if err != nil {
-		logrus.Error("Error marshalling token")
+		logrus.Error("Error marshaling token")
 		http.Error(w, "Unable to create token", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(responseBody)
+
 	if _, err = w.Write(responseBody); err != nil {
 		logrus.Errorf("Error writing response: %s", err.Error())
 	}
