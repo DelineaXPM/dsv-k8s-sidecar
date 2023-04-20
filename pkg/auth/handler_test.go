@@ -21,9 +21,9 @@ func TestAuthHandler_GetToken(t *testing.T) {
 	underTest := auth.NewAuthHandler(authService)
 
 	// Arrange.
-	tokenReq := `{"podName": "1234", "podIp": "abc"}`
+	reqBody := strings.NewReader(`{"podName": "1234", "podIp": "abc"}`)
 
-	req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(tokenReq))
+	req, err := http.NewRequest(http.MethodPost, "/", reqBody)
 	require.NoError(t, err)
 
 	rr := httptest.NewRecorder()
