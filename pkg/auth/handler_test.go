@@ -1,62 +1,54 @@
 package auth_test
 
 import (
-	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/auth"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/mocks"
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/require"
 )
 
-type AuthHandlerTestSuite struct {
-	suite.Suite
-	underTest   auth.AuthHandler
-	authService *mocks.MockAuthService
-}
+func TestAuthHandler_GetToken(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
 
-func TestAuthHandlerSuite(t *testing.T) {
-	suite.Run(t, new(AuthHandlerTestSuite))
-}
+	authService := mocks.NewMockAuthService(mockCtrl)
+	underTest := auth.NewAuthHandler(authService)
 
-func (suite *AuthHandlerTestSuite) SetupTest() {
-	mockCtrl := gomock.NewController(suite.T())
-	defer mockCtrl.Finish()
+	// Arrange.
+	reqBody := strings.NewReader(`{"podName": "1234", "podIp": "abc"}`)
 
-	suite.authService = mocks.NewMockAuthService(mockCtrl)
-	suite.underTest = auth.NewAuthHandler(suite.authService)
-}
-
-func (suite *AuthHandlerTestSuite) TestHandleAuthGet() {
-	// arrange
-	tokenReq := &auth.TokenRequest{
-		PodIp:   "1234",
-		PodName: "abc",
-	}
-
-	tokenResp := &auth.TokenResponse{
-		Token: "foo",
-	}
-
-	body, _ := json.Marshal(tokenReq)
-	req, _ := http.NewRequest("POST", "/", bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, "/", reqBody)
+	require.NoError(t, err)
 
 	rr := httptest.NewRecorder()
 
-	suite.authService.EXPECT().GetToken(gomock.Any()).Return(tokenResp)
+	authService.EXPECT().GetToken(gomock.Any()).Return(
+		&auth.TokenResponse{
+			Token: "foo",
+		},
+	)
 
-	// act
-	suite.underTest.GetToken(rr, req)
+	// Act.
+	underTest.GetToken(rr, req)
 
-	// assert
-	suite.Equal(http.StatusOK, rr.Code)
-	result := new(auth.TokenResponse)
-	json.NewDecoder(rr.Body).Decode(result)
+	// Assert.
+	//nolint:bodyclose // The response body is ok not to close in this case.
+	resp := rr.Result()
+	require.Equal(t, http.StatusOK, resp.StatusCode)
 
-	suite.NotNil(result)
-	suite.Equal("foo", result.Token)
+	respBody, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+
+	require.Equal(t, `{"token":"foo"}`, string(respBody))
+
+	result := &auth.TokenResponse{}
+	err = json.Unmarshal(respBody, result)
+	require.NoError(t, err)
+	require.Equal(t, "foo", result.Token)
 }
