@@ -66,7 +66,7 @@ Dev Deployment:
 
 ## Optional Running Locally with TLS
 
-There are two communication between sidecard and controller
+There are two communication channels between sidecar and controller:
 
 1. Getting JWT token via http/https
 2. Secrets via GRPC
@@ -78,20 +78,22 @@ Optionally we can encrypt these communications at container level.
 - run `mage cert:generate` and choose `Sidecar To Controller`: This will generate certs and keys in .cache folder.
 - create kubernetes secret: `mage k8s:createsecret` or manually: kubectl create secret generic keys --from-file=key.pem --from-file=cert.pem --from-file=ca.pem
 
-### SideCard to Controller GRPC
+### Sidecar to Controller GRPC
 
 Add above k8 secret as volume in Controller's k8 deployment and add the name of cert and private key name env in k8 values.yml.
-`KEY_DIR` => the volume directory.
-`SERVER_CRT` => this will be certs.
-`SERVER_KEY` => this will be private key.
 
-### SideCard to Controller Token
+- `KEY_DIR` => the volume directory.
+- `SERVER_CRT` => this will be certs.
+- `SERVER_KEY` => this will be private key.
+
+### Sidecar to Controller Token
 
 Add above k8 secret as volume in sidecar's k8 deployment and add the name of cert env in k8 values.yml.
-`KEY_DIR` => the volume directory.
-`SERVER_CRT` => this will be certs.
 
-Once the above setup is done all kubernetes secret will mapped to volume and both the sidecard and controller will pick certificates up from volume.
+- `KEY_DIR` => the volume directory.
+- `SERVER_CRT` => this will be certs.
+
+Once the above setup is done all kubernetes secret will mapped to volume and both the sidecar and controller will pick certificates up from volume.
 
 ## Additional Resources
 
