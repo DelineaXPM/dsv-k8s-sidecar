@@ -17,6 +17,7 @@ permissions:
   # Release requires so must be defined here
   contents: write
   actions: read
+  security-events: write
 
 jobs:
   lint:
