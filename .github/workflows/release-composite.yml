@@ -16,6 +16,7 @@ permissions:
   # NOTE: individual jobs define more narrowly scoped permissions.
   # Release requires so must be defined here
   contents: write
+  actions: read
 
 jobs:
   lint:
