@@ -1,3 +1,0 @@
-kind: "\U0001F41B Bug Fix"
-body: Fix writing the same response body twice in auth handler of the controller.
-time: 2023-04-20T14:07:02.796873175+03:00

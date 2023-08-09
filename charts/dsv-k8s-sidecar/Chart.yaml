@@ -29,7 +29,7 @@ keywords:
   - vault
 type: application
 # WARNING: Version should be bumped by changie, not manually.
-version: v1.0.0
+version: v1.0.1
 appVersion: latest
 maintainers:
   - name: Delinea DSV Team

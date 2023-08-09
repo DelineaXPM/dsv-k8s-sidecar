@@ -1,3 +1,0 @@
-kind: "\U0001F41B Bug Fix"
-body: Use secretsvaultcloud.com by default for DSV_API_URL env.
-time: 2023-04-06T14:56:35.555131687+03:00
