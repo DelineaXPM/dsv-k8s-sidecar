@@ -36,13 +36,13 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/ztrue/tracerr v0.3.0 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.13.0 // indirect; indirect // indirect
+	golang.org/x/net v0.17.0 // indirect; indirect // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/term v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/term v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
