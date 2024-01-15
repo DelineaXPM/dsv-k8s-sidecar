@@ -85,7 +85,7 @@ func getGRPCConnection(token credentials.PerRPCCredentials, brokerNamespace stri
 		log.Warn("Failed to get certificate keys: starting the server insecure: ", err.Error())
 		conn, err = grpc.Dial(url, grpc.WithInsecure(), grpc.WithPerRPCCredentials(token))
 	} else {
-		conn, err = grpc.Dial(url, grpc.WithTransportCredentials(creds), grpc.WithPerRPCCredentials(token), grpc.WithWaitForHandshake())
+		conn, err = grpc.Dial(url, grpc.WithTransportCredentials(creds), grpc.WithPerRPCCredentials(token))
 	}
 
 	if err != nil {
