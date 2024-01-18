@@ -18,9 +18,6 @@ github.com/containerd/console
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
-## explicit; go 1.12
-github.com/dgrijalva/jwt-go/v4
 # github.com/dustin/go-humanize v1.0.1
 ## explicit; go 1.16
 github.com/dustin/go-humanize
@@ -35,11 +32,14 @@ github.com/ericchiang/k8s/runtime
 github.com/ericchiang/k8s/runtime/schema
 github.com/ericchiang/k8s/util/intstr
 github.com/ericchiang/k8s/watch/versioned
+# github.com/golang-jwt/jwt/v5 v5.2.0
+## explicit; go 1.18
+github.com/golang-jwt/jwt/v5
 # github.com/golang/mock v1.6.0
 ## explicit; go 1.11
 github.com/golang/mock/gomock
-# github.com/golang/protobuf v1.5.3
-## explicit; go 1.9
+# github.com/golang/protobuf v1.2.0
+## explicit
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
@@ -51,8 +51,8 @@ github.com/gookit/color
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
-# github.com/itchyny/gojq v0.12.12
-## explicit; go 1.18
+# github.com/itchyny/gojq v0.12.14
+## explicit; go 1.19
 github.com/itchyny/gojq
 # github.com/itchyny/timefmt-go v0.1.5
 ## explicit; go 1.17
@@ -100,14 +100,14 @@ github.com/xo/terminfo
 # github.com/ztrue/tracerr v0.4.0
 ## explicit
 github.com/ztrue/tracerr
-# golang.org/x/mod v0.10.0
-## explicit; go 1.17
+# golang.org/x/mod v0.14.0
+## explicit; go 1.18
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.17.0
-## explicit; go 1.17
+# golang.org/x/net v0.20.0
+## explicit; go 1.18
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -167,43 +167,11 @@ google.golang.org/grpc/resolver/passthrough
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# google.golang.org/protobuf v1.26.0
-## explicit; go 1.9
-google.golang.org/protobuf/encoding/prototext
-google.golang.org/protobuf/encoding/protowire
-google.golang.org/protobuf/internal/descfmt
-google.golang.org/protobuf/internal/descopts
-google.golang.org/protobuf/internal/detrand
-google.golang.org/protobuf/internal/encoding/defval
-google.golang.org/protobuf/internal/encoding/messageset
-google.golang.org/protobuf/internal/encoding/tag
-google.golang.org/protobuf/internal/encoding/text
-google.golang.org/protobuf/internal/errors
-google.golang.org/protobuf/internal/filedesc
-google.golang.org/protobuf/internal/filetype
-google.golang.org/protobuf/internal/flags
-google.golang.org/protobuf/internal/genid
-google.golang.org/protobuf/internal/impl
-google.golang.org/protobuf/internal/order
-google.golang.org/protobuf/internal/pragma
-google.golang.org/protobuf/internal/set
-google.golang.org/protobuf/internal/strs
-google.golang.org/protobuf/internal/version
-google.golang.org/protobuf/proto
-google.golang.org/protobuf/reflect/protodesc
-google.golang.org/protobuf/reflect/protoreflect
-google.golang.org/protobuf/reflect/protoregistry
-google.golang.org/protobuf/runtime/protoiface
-google.golang.org/protobuf/runtime/protoimpl
-google.golang.org/protobuf/types/descriptorpb
-google.golang.org/protobuf/types/known/anypb
-google.golang.org/protobuf/types/known/durationpb
-google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# mvdan.cc/sh/v3 v3.6.0
-## explicit; go 1.18
+# mvdan.cc/sh/v3 v3.7.0
+## explicit; go 1.19
 mvdan.cc/sh/v3/expand
 mvdan.cc/sh/v3/fileutil
 mvdan.cc/sh/v3/pattern

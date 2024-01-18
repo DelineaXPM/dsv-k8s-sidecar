@@ -7,7 +7,7 @@ import (
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/pods"
 
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
