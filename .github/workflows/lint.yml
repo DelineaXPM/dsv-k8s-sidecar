@@ -13,7 +13,10 @@ on:
   #   - cron: '0 6 * * *'
   workflow_dispatch:
   workflow_call:
-permissions: read-all
+permissions:
+  pull-requests: read
+  contents: read
+  checks: write
 jobs:
   lint:
     uses: delineaxpm/github-workflows/.github/workflows/lint.yml@main
