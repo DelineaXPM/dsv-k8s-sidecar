@@ -23,7 +23,7 @@ builds:
       - -X main.date={{ .Timestamp }}
       - -X main.builtBy=goreleaser
     goos: [linux]
-    goarch: [amd64]
+    goarch: [amd64, arm64]
 
   - id: dsv-k8s-sidecar
     binary: dsv-k8s-sidecar
@@ -36,7 +36,7 @@ builds:
       - -X main.date={{ .Timestamp }}
       - -X main.builtBy=goreleaser
     goos: [linux]
-    goarch: [amd64]
+    goarch: [amd64, arm64]
 
 archives:
   - id: binary
