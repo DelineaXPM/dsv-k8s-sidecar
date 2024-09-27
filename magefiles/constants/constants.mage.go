@@ -67,3 +67,7 @@ const (
 	// D2OverviewDiagramSVG is the path to the png file for the overview diagram.
 	D2OverviewDiagramSVG = "./docs/overview.svg"
 )
+const (
+	// DockerImageLocalRegistry is the name of the built image to run locally and load with minikube/kind.
+	DockerImageLocalRegistry = "dev.local"
+)

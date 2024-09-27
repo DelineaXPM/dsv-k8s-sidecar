@@ -63,7 +63,7 @@ func BuildAll() error {
 		"release",
 		"--snapshot",
 		"--clean",
-		"--skip-publish",
+		"--skip", "publish,sbom",
 	}
 	pterm.Debug.Printfln("goreleaser: %+v", releaserArgs)
 	return sh.RunV(binary, releaserArgs...)

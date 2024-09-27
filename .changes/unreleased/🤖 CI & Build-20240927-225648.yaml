@@ -1,0 +1,3 @@
+kind: "\U0001F916 CI & Build"
+body: Improve documentation for the setup, making it clear what the container setup section in the sidecar chart is for, which is the user provided container to attach the sidecar too.
+time: 2024-09-27T22:56:48.721675812Z

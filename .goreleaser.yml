@@ -1,4 +1,5 @@
 ---
+version: 2
 project_name: dsv-k8s-sidecar
 dist: .artifacts
 env:
@@ -40,13 +41,7 @@ builds:
 archives:
   - id: binary
     format: binary
-  - id: replacements
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
+
 checksum:
   name_template: checksums.txt
   algorithm: sha256
@@ -54,7 +49,7 @@ checksum:
 snapshot:
   name_template: '{{ incpatch .Version }}-next'
 changelog:
-  skip: false
+  disable: true
   sort: asc
   use: github
   groups:
@@ -85,6 +80,7 @@ dockers:
     image_templates:
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Version }}{{ end }}'
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:latest{{ end }}'
+      - 'dev.local/dsv-k8s-controller:latest'
     skip_push: false
     dockerfile: ./docker/Dockerfile.controller
     use: buildx
@@ -115,8 +111,9 @@ dockers:
     ids: [dsv-controller]
     goos: linux
     image_templates:
-      - 'dsv-k8s-controller:{{ .Version }}'
-      - 'dsv-k8s-controller:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+      - 'dev.local/dsv-k8s-controller:{{ .Version }}'
+      - 'dev.local/dsv-k8s-controller:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+
     skip_push: true
     dockerfile: ./docker/Dockerfile.controller
     use: buildx
@@ -132,8 +129,8 @@ dockers:
     ids: [dsv-k8s-sidecar]
     goos: linux
     image_templates:
-      - 'dsv-k8s-sidecar:{{ .Version }}'
-      - 'dsv-k8s-sidecar:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
+      - 'dev.local/dsv-k8s-sidecar:{{ .Version }}'
+      - 'dev.local/dsv-k8s-sidecar:latest' # This one is for dev usage so latest version, no tagged semver required in docker compose or local testing
     skip_push: true
     dockerfile: ./docker/Dockerfile.sidecar
     use: buildx

@@ -4,13 +4,13 @@
 # -- replicaCount
 # @default -- 1
 replicaCount: 1
-# -- containername is the name of the user provided container
+# -- containername is the name of the user provided container.
 # *REQUIRED*
 containername:
-# -- image is the image configuration for the user provided service.
+# -- IMPORTANT: This image is the configuration for the user provided service, not the sidecar. The sidecar will be part of this deployment. For example, you could use docker.io/nginx:last and name it nginx as the container name.
 # *REQUIRED*
 image:
-  # -- repository is the name of the fully qualified image
+  # -- repository is the name of the fully qualified image, and is the user image, not the sidecar image.
   # *REQUIRED*
   repository:
   # -- pullPolicy is the image pull policy

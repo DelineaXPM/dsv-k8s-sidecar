@@ -1,34 +1,34 @@
 ---
 registries:
   - type: standard
-    ref: v4.118.0 # renovate: depName=aquaproj/aqua-registry
+    ref: v4.226.0 # renovate: depName=aquaproj/aqua-registry
   - name: local
     type: local
     path: registry.yaml
 packages:
-  - name: golang/go@go1.21.6
+  - name: golang/go@go1.23.1
     tags: ['ci']
-  - name: direnv/direnv@v2.33.0
+  - name: direnv/direnv@v2.34.0
   - name: magefile/mage@v1.15.0
     tags: ['ci', 'release', 'test']
-  - name: charmbracelet/glow@v1.5.1
-  - name: helm/helm@v3.13.3
-  - name: kubernetes/kubectl@v1.29.0
-  - name: kubernetes-sigs/kind@v0.20.0
-  - name: cloudflare/cfssl@v1.6.4
-  - name: goreleaser/goreleaser@v1.23.0
+  - name: charmbracelet/glow@v2.0.0
+  - name: helm/helm@v3.16.1
+  - name: kubernetes/kubectl@v1.31.1
+  - name: kubernetes-sigs/kind@v0.24.0
+  - name: cloudflare/cfssl@v1.6.5
+  - name: goreleaser/goreleaser@v2.3.2
     tags: ['ci', 'release']
-  - name: anchore/syft@v0.100.0
+  - name: anchore/syft@v1.13.0
     tags: ['release']
-  - name: gotestyourself/gotestsum@v1.11.0
+  - name: gotestyourself/gotestsum@v1.12.0
     tags: ['test']
-  - name: kubernetes/minikube@v1.32.0
-  - name: miniscruff/changie@v1.17.0
+  - name: kubernetes/minikube@v1.34.0
+  - name: miniscruff/changie@v1.21.0
     tags: ['ci', 'release']
   - name: norwoodj/helm-docs
     version: v1.11.0
-  - name: cloudflare/cfssl/cfssljson@v1.6.4
-  - name: tilt-dev/tilt@v0.33.10
-  - name: stern/stern@v1.28.0
-  - name: terrastruct/d2@v0.6.3
-  - name: DelineaXPM/dsv-cli@v1.40.5
+  - name: cloudflare/cfssl/cfssljson@v1.6.5
+  - name: tilt-dev/tilt@v0.33.20
+  - name: stern/stern@v1.30.0
+  - name: terrastruct/d2@v0.6.6
+  - name: DelineaXPM/dsv-cli@v1.41.1

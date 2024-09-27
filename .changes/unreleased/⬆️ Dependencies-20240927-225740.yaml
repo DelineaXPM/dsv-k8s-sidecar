@@ -1,0 +1,3 @@
+kind: ⬆️ Dependencies
+body: Migrate to goreleaser v2 format, and ensure all the required mage tasks use the correct options.
+time: 2024-09-27T22:57:40.144386725Z

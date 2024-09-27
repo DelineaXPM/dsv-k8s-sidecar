@@ -1,6 +1,6 @@
 # dsv-k8s-controller
 
-![Version: 0.2.3](https://img.shields.io/badge/Version-0.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: latest](https://img.shields.io/badge/AppVersion-latest-informational?style=flat-square)
+![Version: v1.0.2](https://img.shields.io/badge/Version-v1.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: latest](https://img.shields.io/badge/AppVersion-latest-informational?style=flat-square)
 
 A Helm chart for the Delinea DevOps Secrets Vault (DSV) k8 sidecar broker.
 This can be installed once, or split up per namespace.

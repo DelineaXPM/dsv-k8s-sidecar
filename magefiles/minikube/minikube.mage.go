@@ -14,6 +14,9 @@ import (
 	mtu "github.com/sheldonhull/magetools/pkg/magetoolsutils"
 )
 
+// _minikube is the binary name for minikube.
+const _minikube = "minikube"
+
 // Minikube contains the kind cli commands.
 type Minikube mg.Namespace
 
@@ -51,7 +54,7 @@ func updateKubeconfig() error {
 			pterm.Error.Printfln("unable to create empty placeholder file: %v", err)
 		}
 	}
-	_, err := sh.Output("minikube", "update-context", "--profile", constants.KindClusterName)
+	_, err := sh.Output(_minikube, "update-context", "--profile", constants.KindClusterName)
 	if err != nil {
 		pterm.Error.Println("unable to get minikube cluster info, maybe you need to run mage minikube:init first?")
 		return err
@@ -78,7 +81,7 @@ func (Minikube) LoadImages() {
 	mtu.CheckPtermDebug()
 	for _, chart := range constants.HelmChartsList {
 		// Load image into minikube
-		if err := sh.Run("minikube", "image", "load", "--profile", constants.KindClusterName, fmt.Sprintf("%s:latest", chart.ReleaseName)); err != nil {
+		if err := sh.Run(_minikube, "image", "load", "--overwrite", "--profile", constants.KindClusterName, fmt.Sprintf("%s:latest", chart.ReleaseName)); err != nil { //nolint:revive // ok to have string constant for the minikube profile command.
 			pterm.Error.Printfln("unable to load image into minikube: %v", err)
 		}
 		pterm.Success.Printfln("image loaded into minikube: %s", chart.ReleaseName)
@@ -140,7 +143,7 @@ func (Minikube) Init() error {
 func (Minikube) Destroy() error {
 	mtu.CheckPtermDebug()
 	checkKubeConfig()
-	if err := sh.Run("minikube", "delete", "--profile", constants.KindClusterName); err != nil {
+	if err := sh.Run(_minikube, "delete", "--profile", constants.KindClusterName); err != nil {
 		pterm.Error.Printfln("minikube delete error: %v", err)
 		return err
 	}
