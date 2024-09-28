@@ -31,6 +31,9 @@ func (Job) Redeploy() {
 		// mg.F(k8s.K8s{}.Delete, constants.CacheManifestDirectory),
 		// mg.F(k8s.K8s{}.Apply, constants.CacheManifestDirectory),
 		// k8s.K8s{}.Logs,
+		minikube.Minikube{}.RemoveImages,
+		minikube.Minikube{}.LoadImages, // just be sure in case forget to load local images that the latest is always used
+		helm.Helm{}.Install,
 		helm.Helm{}.Install,
 	)
 }

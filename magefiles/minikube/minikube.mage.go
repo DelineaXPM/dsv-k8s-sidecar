@@ -3,10 +3,11 @@ package minikube
 
 import (
 	"fmt"
-	"os"
-	"time"
-
 	"github.com/DelineaXPM/dsv-k8s-sidecar/magefiles/constants"
+	"os"
+	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -81,7 +82,7 @@ func (Minikube) LoadImages() {
 	mtu.CheckPtermDebug()
 	for _, chart := range constants.HelmChartsList {
 		// Load image into minikube
-		if err := sh.Run(_minikube, "image", "load", "--overwrite", "--profile", constants.KindClusterName, fmt.Sprintf("%s:latest", chart.ReleaseName)); err != nil { //nolint:revive // ok to have string constant for the minikube profile command.
+		if err := sh.Run(_minikube, "image", "load", "--overwrite", "--profile", constants.KindClusterName, fmt.Sprintf("%s/%s:latest", constants.DockerImageLocalRegistry, chart.ReleaseName)); err != nil { //nolint:revive // ok to have string constant for the minikube profile command.
 			pterm.Error.Printfln("unable to load image into minikube: %v", err)
 		}
 		pterm.Success.Printfln("image loaded into minikube: %s", chart.ReleaseName)
@@ -153,4 +154,67 @@ func (Minikube) Destroy() error {
 
 	pterm.Success.Println("(Minikube) Destroy()")
 	return nil
+}
+
+// Dashboard opens the Minikube dashboard.
+func (Minikube) Dashboard() error {
+	mtu.CheckPtermDebug()
+	checkKubeConfig()
+	if err := sh.Run("minikube", "dashboard", "--profile", constants.KindClusterName, "addons", "enable", "metrics-service"); err != nil {
+		return err
+	}
+	if err := sh.Run(_minikube, "dashboard", "--profile", "dsvtest"); err != nil {
+		return err
+	}
+	return nil
+}
+
+// 🔍 ListImages provides a list of the minikube loaded images
+func (Minikube) ListImages() {
+	mtu.CheckPtermDebug()
+	pterm.DefaultSection.Println("(Minikube) ListImages()")
+	if err := sh.RunV("minikube", "image", "ls", "--profile", constants.KindClusterName); err != nil {
+		pterm.Error.Printfln("images not listed from minikube: %v", err)
+	}
+	pterm.Success.Printfln("images listed from minikube")
+}
+
+// 💾 RemoveImages removes the images both local and docker registered from the minikube cluster.
+func (Minikube) RemoveImages() {
+	mtu.CheckPtermDebug()
+	var output string
+	// var err error
+	var elapsed time.Duration
+	for _, chart := range constants.HelmChartsList {
+		for {
+			// Run the docker rmi command and capture the output
+
+			cmd := exec.Command( //nolint:gosec // this is a local command being built
+				"minikube",
+				"image",
+				"rm",
+				"--profile", constants.KindClusterName,
+				fmt.Sprintf("%s", chart.ReleaseName),
+			)
+			out, err := cmd.CombinedOutput()
+			output = string(out)
+			if err != nil {
+				pterm.Error.Printfln("image not rm from minikube: %v", err)
+			}
+			// Check if the output contains the image name
+			if !strings.Contains(output, chart.ReleaseName) ||
+				strings.Contains(output, fmt.Sprintf("No such image: %s", chart.ReleaseName)) {
+				pterm.Success.Printfln("image unloaded")
+				break
+			}
+
+			// If the image is still being unloaded, print a progress message
+			pterm.Info.Printf("Still waiting for image [%s] to unload (elapsed time: %s)\n", chart.ReleaseName, elapsed.Round(time.Second))
+
+			// Wait for 3 seconds before trying again
+			time.Sleep(3 * time.Second) //nolint:gomnd // no need to make a constant
+			elapsed += 3 * time.Second
+		}
+		pterm.Success.Printfln("image removed from minikube: %s", chart.ReleaseName)
+	}
 }

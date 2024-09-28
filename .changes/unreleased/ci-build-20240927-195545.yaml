@@ -1,0 +1,3 @@
+kind: ci-build
+body: Add reference to updated trunk install setup commands in upstream package instead of outdated one local.
+time: 2024-09-27T19:55:45.445322-05:00

@@ -50,7 +50,7 @@ If there are needs missing for your usage, feel free to open a GitHub issue desc
 ## Running Project Against Local Kind Cluster
 
 > **Note**
-> Further directions on development setup are in [Developer - Tasks](DEVELOPER.md#tasks).
+> Further directions on development setup are in [Developer](docs/setup-project.md).
 
 - `mage cert:generate` to create the local certs in `.cache` directory.
 
@@ -97,7 +97,7 @@ Once the above setup is done all kubernetes secret will mapped to volume and bot
 
 ## Additional Resources
 
-- [Developer](DEVELOPER.md): instructions on running tests, local tooling, and other resources.
+- [Developer](docs/setup-project.md): instructions on running tests, local tooling, and other resources.
 - [DSV Documentation](https://docs.delinea.com/dsv/current?ref=githubrepo)
 - [DSV-K8S](https://github.com/DelineaXPM/dsv-k8s) is another approach using a Kubernetes syncing and injector hook to directly update Kubernetes secrets.
   This alternative approach does not leverage a sidecar.

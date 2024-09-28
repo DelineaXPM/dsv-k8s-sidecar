@@ -1,0 +1,3 @@
+kind: ci-build
+body: Add `minikube:listimages` and `minikube:dashboard` mage tasks from dsv-k8s repo.
+time: 2024-09-27T19:25:45.974911-05:00

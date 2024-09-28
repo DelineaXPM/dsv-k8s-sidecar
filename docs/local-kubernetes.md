@@ -17,6 +17,7 @@ This is not required, but might make things a little more friendly over running 
 
 For local development, Mage tasks have been created to automate most of the setup and usage for local testing.
 
+- Build docker images: `mage buildall`.
 - run `mage job:setup` to setup a local k8s cluster, initial local copies of the helm chart and kubernetes manifest files.
 - Modify the `.cache/dsv-k8s-sidecar/values.yaml` with your list of secrets to map and base image to attach sidecar to.
 - Modify the `.cache/charts/dsv-k8s-controller/values.yaml` configuration to include the client credentials to connect to.
