@@ -7,18 +7,19 @@ require (
 	github.com/ericchiang/k8s v1.2.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/golang/mock v1.6.0
-	github.com/golang/protobuf v1.2.0
+	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.1
 	github.com/magefile/mage v1.15.0
 	github.com/pterm/pterm v0.12.79
 	github.com/sheldonhull/magetools v1.0.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/grpc v1.16.0
+	google.golang.org/grpc v1.56.3
 )
 
 require (
 	atomicgo.dev/schedule v0.1.0 // indirect
+	google.golang.org/protobuf v1.30.0 // indirect
 	mvdan.cc/sh/v3 v3.7.0 // indirect
 )
 
@@ -42,6 +43,6 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8 // indirect
+	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
