@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/bitfield/script v0.22.1
 	github.com/ericchiang/k8s v1.2.0
-	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/mux v1.8.1
