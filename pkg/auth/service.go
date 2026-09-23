@@ -39,7 +39,8 @@ func (s *authService) GetToken(request *TokenRequest) *TokenResponse {
 	if pod == nil {
 		logrus.Errorf("pod is nil")
 	}
-	if pod == nil || *pod.Status.PodIP != request.PodIp {
+	// An unassigned pod IP is "", which must not match a request that also omits it.
+	if pod == nil || pod.Status.PodIP == "" || pod.Status.PodIP != request.PodIp {
 		return nil
 	}
 
@@ -50,8 +51,8 @@ func (s *authService) GetToken(request *TokenRequest) *TokenResponse {
 	claims := token.Claims.(jwt.MapClaims)
 
 	/* Set token claims */
-	claims["sub"] = *pod.Metadata.Uid
-	claims["name"] = *pod.Metadata.Name
+	claims["sub"] = string(pod.UID)
+	claims["name"] = pod.Name
 	claims["type"] = "pod"
 	claims["exp"] = time.Now().Add(time.Hour * 2400).Unix() // Long Term token.
 

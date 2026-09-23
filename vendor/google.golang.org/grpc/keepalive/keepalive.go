@@ -33,15 +33,30 @@ import (
 type ClientParameters struct {
 	// After a duration of this time if the client doesn't see any activity it
 	// pings the server to see if the transport is still alive.
-	Time time.Duration // The current default value is infinity.
+	// If set below 10s, a minimum value of 10s will be used instead.
+	//
+	// Note that gRPC servers have a default EnforcementPolicy.MinTime of 5
+	// minutes (which means the client shouldn't ping more frequently than every
+	// 5 minutes).
+	//
+	// Though not ideal, it's not a strong requirement for Time to be less than
+	// EnforcementPolicy.MinTime.  Time will automatically double if the server
+	// disconnects due to its enforcement policy.
+	//
+	// For more details, see
+	// https://github.com/grpc/proposal/blob/master/A8-client-side-keepalive.md
+	Time time.Duration
 	// After having pinged for keepalive check, the client waits for a duration
 	// of Timeout and if no activity is seen even after that the connection is
 	// closed.
-	Timeout time.Duration // The current default value is 20 seconds.
+	//
+	// If keepalive is enabled, and this value is not explicitly set, the default
+	// is 20 seconds.
+	Timeout time.Duration
 	// If true, client sends keepalive pings even with no active RPCs. If false,
 	// when there are no active RPCs, Time and Timeout will be ignored and no
 	// keepalive pings will be sent.
-	PermitWithoutStream bool // false by default.
+	PermitWithoutStream bool
 }
 
 // ServerParameters is used to set keepalive and max-age parameters on the
@@ -57,11 +72,12 @@ type ServerParameters struct {
 	// random jitter of +/-10% will be added to MaxConnectionAge to spread out
 	// connection storms.
 	MaxConnectionAge time.Duration // The current default value is infinity.
-	// MaxConnectinoAgeGrace is an additive period after MaxConnectionAge after
+	// MaxConnectionAgeGrace is an additive period after MaxConnectionAge after
 	// which the connection will be forcibly closed.
 	MaxConnectionAgeGrace time.Duration // The current default value is infinity.
 	// After a duration of this time if the server doesn't see any activity it
 	// pings the client to see if the transport is still alive.
+	// If set below 1s, a minimum value of 1s will be used instead.
 	Time time.Duration // The current default value is 2 hours.
 	// After having pinged for keepalive check, the server waits for a duration
 	// of Timeout and if no activity is seen even after that the connection is

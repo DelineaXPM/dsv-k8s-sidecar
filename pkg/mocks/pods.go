@@ -5,52 +5,57 @@
 package mocks
 
 import (
-	v1 "github.com/ericchiang/k8s/apis/core/v1"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
+	v1 "k8s.io/api/core/v1"
 )
 
-// MockPodRegistry is a mock of PodRegistry interface
+// MockPodRegistry is a mock of PodRegistry interface.
 type MockPodRegistry struct {
 	ctrl     *gomock.Controller
 	recorder *MockPodRegistryMockRecorder
 }
 
-// MockPodRegistryMockRecorder is the mock recorder for MockPodRegistry
+// MockPodRegistryMockRecorder is the mock recorder for MockPodRegistry.
 type MockPodRegistryMockRecorder struct {
 	mock *MockPodRegistry
 }
 
-// NewMockPodRegistry creates a new mock instance
+// NewMockPodRegistry creates a new mock instance.
 func NewMockPodRegistry(ctrl *gomock.Controller) *MockPodRegistry {
 	mock := &MockPodRegistry{ctrl: ctrl}
 	mock.recorder = &MockPodRegistryMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockPodRegistry) EXPECT() *MockPodRegistryMockRecorder {
 	return m.recorder
 }
 
-// Done mocks base method
+// Done mocks base method.
 func (m *MockPodRegistry) Done() {
+	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Done")
 }
 
-// Done indicates an expected call of Done
+// Done indicates an expected call of Done.
 func (mr *MockPodRegistryMockRecorder) Done() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Done", reflect.TypeOf((*MockPodRegistry)(nil).Done))
 }
 
-// Get mocks base method
+// Get mocks base method.
 func (m *MockPodRegistry) Get(arg0 string) *v1.Pod {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0)
 	ret0, _ := ret[0].(*v1.Pod)
 	return ret0
 }
 
-// Get indicates an expected call of Get
+// Get indicates an expected call of Get.
 func (mr *MockPodRegistryMockRecorder) Get(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockPodRegistry)(nil).Get), arg0)
 }

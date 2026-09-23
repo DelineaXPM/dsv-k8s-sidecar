@@ -5,10 +5,10 @@ import (
 
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/auth"
 	"github.com/DelineaXPM/dsv-k8s-sidecar/pkg/mocks"
-	"github.com/ericchiang/k8s/apis/core/v1"
-	metaV1 "github.com/ericchiang/k8s/apis/meta/v1"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
+	v1 "k8s.io/api/core/v1"
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type AuthTestSuite struct {
@@ -31,29 +31,39 @@ func (suite *AuthTestSuite) SetupTest() {
 	suite.underTest = auth.NewAuthService("foo", suite.registry)
 }
 
+func testPod(name, ip string) *v1.Pod {
+	return &v1.Pod{
+		ObjectMeta: metaV1.ObjectMeta{UID: "abc", Name: name},
+		Status:     v1.PodStatus{PodIP: ip},
+	}
+}
+
 func (suite *AuthTestSuite) TestGetTokenValidPod() {
-	ip, uid, name := "12356", "abc", "name"
-	pod := &v1.Pod{
-		Status: &v1.PodStatus{
-			PodIP: &ip,
-		},
-		Metadata: &metaV1.ObjectMeta{
-			Uid:  &uid,
-			Name: &name,
-		},
-	}
+	suite.registry.EXPECT().Get(gomock.Eq("name")).Return(testPod("name", "12356"))
 
-	suite.registry.EXPECT().Get(gomock.Eq("name")).Return(pod)
-
-	request := &auth.TokenRequest{
-		PodName: name,
-		PodIp:   ip,
-	}
-
-	result := suite.underTest.GetToken(request)
+	result := suite.underTest.GetToken(&auth.TokenRequest{PodName: "name", PodIp: "12356"})
 
 	suite.NotNil(result)
 	suite.NotEmpty(result.Token)
+}
+
+func (suite *AuthTestSuite) TestGetTokenRejects() {
+	cases := map[string]struct {
+		pod     *v1.Pod
+		request auth.TokenRequest
+	}{
+		"unknown pod":        {nil, auth.TokenRequest{PodName: "name", PodIp: "12356"}},
+		"IP mismatch":        {testPod("name", "12356"), auth.TokenRequest{PodName: "name", PodIp: "10.0.0.1"}},
+		"unassigned pod IP":  {testPod("name", ""), auth.TokenRequest{PodName: "name", PodIp: ""}},
+		"request without IP": {testPod("name", "12356"), auth.TokenRequest{PodName: "name"}},
+	}
+
+	for name, tc := range cases {
+		suite.Run(name, func() {
+			suite.registry.EXPECT().Get(gomock.Eq("name")).Return(tc.pod)
+			suite.Nil(suite.underTest.GetToken(&tc.request))
+		})
+	}
 }
 
 func (suite *AuthTestSuite) TestGetUnaryInterceptor() {
