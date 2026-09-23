@@ -6,7 +6,7 @@ registries:
     type: local
     path: registry.yaml
 packages:
-  - name: golang/go@go1.23.1
+  - name: golang/go@go1.26.8
     tags: ['ci']
   - name: direnv/direnv@v2.34.0
   - name: magefile/mage@v1.15.0

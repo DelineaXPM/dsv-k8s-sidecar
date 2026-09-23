@@ -1,7 +1,8 @@
 module github.com/DelineaXPM/dsv-k8s-sidecar
 
-go 1.22
-toolchain go1.24.1
+go 1.26.0
+
+toolchain go1.26.8
 
 require (
 	github.com/bitfield/script v0.22.1
@@ -38,11 +39,11 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/ztrue/tracerr v0.4.0 // indirect
-	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.38.0 // indirect; indirect // indirect
-	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/term v0.30.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/net v0.59.0 // indirect; indirect // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
