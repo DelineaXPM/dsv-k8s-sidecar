@@ -2,6 +2,8 @@ package pods
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -12,7 +14,13 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-const syncTimeout = time.Minute
+const (
+	syncTimeout = time.Minute
+	// Watch events keep the store current, so periodic resync is disabled.
+	noResync time.Duration = 0
+)
+
+var errSyncTimeout = errors.New("pod informer did not sync")
 
 type podRegistry struct {
 	tenant string
@@ -25,38 +33,33 @@ type PodRegistry interface {
 	Done()
 }
 
-func NewPodRegistry(tenant, namespace string) PodRegistry {
+func NewPodRegistry(tenant, namespace string) (PodRegistry, error) { //nolint:ireturn // PodRegistry is the seam auth tests mock.
 	log.Info("Creating Pod Registry")
 
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	registry, err := newPodRegistry(client, tenant, namespace, syncTimeout)
-	if err != nil {
-		log.WithField("error", err.Error()).Fatal("cannot create Pod informer")
-	}
-
-	return registry
+	return newInformerRegistry(client, tenant, namespace, syncTimeout)
 }
 
-// newPodRegistry watches pods through an informer, whose store is safe for
-// concurrent reads while the informer applies watch events and re-lists
+// newInformerRegistry watches pods through an informer, whose store is safe
+// for concurrent reads while the informer applies watch events and re-lists
 // after a dropped watch.
-func newPodRegistry(client kubernetes.Interface, tenant, namespace string, timeout time.Duration) (*podRegistry, error) {
-	factory := informers.NewSharedInformerFactoryWithOptions(client, 0, informers.WithNamespace(namespace))
+func newInformerRegistry(client kubernetes.Interface, tenant, namespace string, timeout time.Duration) (*podRegistry, error) {
+	factory := informers.NewSharedInformerFactoryWithOptions(client, noResync, informers.WithNamespace(namespace))
 	informer := factory.Core().V1().Pods().Informer()
 
 	_, err := informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(obj interface{}) { logPodEvent(tenant, "ADDED", obj) },
-		UpdateFunc: func(_, obj interface{}) { logPodEvent(tenant, "MODIFIED", obj) },
-		DeleteFunc: func(obj interface{}) { logPodEvent(tenant, "DELETED", obj) },
+		AddFunc:    func(obj any) { logPodEvent(tenant, "ADDED", obj) },
+		UpdateFunc: func(_, obj any) { logPodEvent(tenant, "MODIFIED", obj) },
+		DeleteFunc: func(obj any) { logPodEvent(tenant, "DELETED", obj) },
 	})
 	if err != nil {
 		return nil, err
@@ -69,7 +72,7 @@ func newPodRegistry(client kubernetes.Interface, tenant, namespace string, timeo
 	defer cancel()
 	if !cache.WaitForCacheSync(ctx.Done(), informer.HasSynced) {
 		close(stop)
-		return nil, context.DeadlineExceeded
+		return nil, fmt.Errorf("%w within %s", errSyncTimeout, timeout)
 	}
 
 	return &podRegistry{tenant, informer.GetStore(), stop}, nil
@@ -95,7 +98,7 @@ func (r *podRegistry) Done() {
 	close(r.stop)
 }
 
-func logPodEvent(tenant, eventType string, obj interface{}) {
+func logPodEvent(tenant, eventType string, obj any) {
 	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = tombstone.Obj
 	}

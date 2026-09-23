@@ -1,7 +1,6 @@
-package pods
+package pods //nolint:testpackage // exercises the unexported newInformerRegistry with a fake clientset.
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -29,7 +28,7 @@ func TestPodRegistryGet(t *testing.T) {
 		pod("app", "unannotated", "", "10.0.0.3"),
 	)
 
-	r, err := newPodRegistry(client, "tenant-a", "", 5*time.Second)
+	r, err := newInformerRegistry(client, "tenant-a", "", 5*time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,14 +47,14 @@ func TestPodRegistryGet(t *testing.T) {
 func TestPodRegistryFollowsWatchEvents(t *testing.T) {
 	client := fake.NewSimpleClientset()
 
-	r, err := newPodRegistry(client, "tenant-a", "app", 5*time.Second)
+	r, err := newInformerRegistry(client, "tenant-a", "app", 5*time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer r.Done()
 
 	pods := client.CoreV1().Pods("app")
-	ctx := context.Background()
+	ctx := t.Context()
 
 	if _, err := pods.Create(ctx, pod("app", "p", "tenant-a", "10.0.0.1"), metav1.CreateOptions{}); err != nil {
 		t.Fatal(err)
