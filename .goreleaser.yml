@@ -80,7 +80,6 @@ dockers:
     image_templates:
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:{{ .Version }}{{ end }}'
       - '{{ if index .Env "DOCKER_ORG" }}{{ .Env.DOCKER_ORG }}/dsv-k8s-controller:latest{{ end }}'
-      - 'dev.local/dsv-k8s-controller:latest'
     skip_push: false
     dockerfile: ./docker/Dockerfile.controller
     use: buildx
