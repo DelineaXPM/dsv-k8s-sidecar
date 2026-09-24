@@ -59,7 +59,10 @@ func main() {
 	secretClient := secrets.CreateSecretClient(tenant, clientID, clientSecret, authType)
 	secretServer := secrets.NewSecretServer(secretClient)
 
-	registry := pods.NewPodRegistry(tenant, os.Getenv("SIDECAR_NAMESPACE"))
+	registry, err := pods.NewPodRegistry(tenant, os.Getenv("SIDECAR_NAMESPACE"))
+	if err != nil {
+		log.WithField("error", err.Error()).Fatal("cannot create Pod registry")
+	}
 	authService := auth.NewAuthService(util.EnvString("AUTH_SECRET", "Secret"), registry)
 	authHandler := auth.NewAuthHandler(authService)
 

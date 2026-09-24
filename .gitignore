@@ -53,7 +53,7 @@ Temporary Items
 **/*/bin
 .env
 artifacts/
-tools
+/tools
 .artifacts
 _artifacts
 **/*/bin

@@ -2,18 +2,30 @@ package pods
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"time"
 
-	"github.com/ericchiang/k8s"
-	corev1 "github.com/ericchiang/k8s/apis/core/v1"
 	log "github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/informers"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/cache"
 )
 
+const (
+	syncTimeout = time.Minute
+	// Watch events keep the store current, so periodic resync is disabled.
+	noResync time.Duration = 0
+)
+
+var errSyncTimeout = errors.New("pod informer did not sync")
+
 type podRegistry struct {
-	tenant         string
-	registeredPods map[string]*corev1.Pod
-	create         chan *corev1.Pod
-	update         chan *corev1.Pod
-	remove         chan *corev1.Pod
+	tenant string
+	store  cache.Store
+	stop   chan struct{}
 }
 
 type PodRegistry interface {
@@ -21,123 +33,85 @@ type PodRegistry interface {
 	Done()
 }
 
-func NewPodRegistry(tenant, namespace string) PodRegistry {
-
+func NewPodRegistry(tenant, namespace string) (PodRegistry, error) { //nolint:ireturn // PodRegistry is the seam auth tests mock.
 	log.Info("Creating Pod Registry")
-	ctx := context.Background()
 
-	client, err := k8s.NewInClusterClient()
-
+	config, err := rest.InClusterConfig()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	create := make(chan *corev1.Pod)
-	update := make(chan *corev1.Pod)
-	remove := make(chan *corev1.Pod)
-
-	pods := make(map[string]*corev1.Pod)
-	registry := &podRegistry{
-		tenant,
-		pods,
-		create,
-		update,
-		remove,
-	}
-
-	var pod corev1.Pod
-	watcher, err := client.Watch(ctx, namespace, &pod)
-
+	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.WithField("error", err.Error()).Fatal("cannot create Pod event watcher")
+		return nil, err
 	}
 
-	go func(tenant string, watcher *k8s.Watcher, create, update, remove chan<- *corev1.Pod) {
-		for {
-			p := new(corev1.Pod)
-			eventType, err := watcher.Next(p)
-			log.WithField("eventType", eventType).Info("watcher new eventType")
-			if err != nil {
-				log.WithField("error", err.Error()).Error("Error getting pod")
-				watcher, err = client.Watch(ctx, namespace, &pod)
-				if err != nil {
-					log.WithField("error", err.Error()).Error("not able to recreate pod watcher")
-					panic(err)
-				}
-				continue
-			}
-
-			t, exists := p.Metadata.Annotations["dsv"]
-			if !exists || tenant != t {
-				continue
-			}
-
-			log.WithFields(log.Fields{
-				"event":     eventType,
-				"name":      *p.Metadata.Name,
-				"namespace": *p.Metadata.Namespace,
-				"message":   *p.Status.Message,
-			}).Info("Received Pod Event")
-
-			switch eventType {
-			case "ADDED":
-				create <- p
-			case "MODIFIED":
-				update <- p
-			case "DELETED":
-				remove <- p
-			default:
-				log.WithField("event", eventType).Error("Unable to find event")
-			}
-		}
-	}(tenant, watcher, create, update, remove)
-
-	go registry.addRegistry(create)
-	go registry.updateRegistry(update)
-	go registry.removeRegistry(remove)
-
-	return registry
+	return newInformerRegistry(client, tenant, namespace, syncTimeout)
 }
 
+// newInformerRegistry watches pods through an informer, whose store is safe
+// for concurrent reads while the informer applies watch events and re-lists
+// after a dropped watch.
+func newInformerRegistry(client kubernetes.Interface, tenant, namespace string, timeout time.Duration) (*podRegistry, error) {
+	factory := informers.NewSharedInformerFactoryWithOptions(client, noResync, informers.WithNamespace(namespace))
+	informer := factory.Core().V1().Pods().Informer()
+
+	_, err := informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc:    func(obj any) { logPodEvent(tenant, "ADDED", obj) },
+		UpdateFunc: func(_, obj any) { logPodEvent(tenant, "MODIFIED", obj) },
+		DeleteFunc: func(obj any) { logPodEvent(tenant, "DELETED", obj) },
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	stop := make(chan struct{})
+	factory.Start(stop)
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	if !cache.WaitForCacheSync(ctx.Done(), informer.HasSynced) {
+		close(stop)
+		return nil, fmt.Errorf("%w within %s", errSyncTimeout, timeout)
+	}
+
+	return &podRegistry{tenant, informer.GetStore(), stop}, nil
+}
+
+// Get returns the pod with the given "namespace/name" key, or nil unless the
+// pod carries this tenant's "dsv" annotation.
 func (r *podRegistry) Get(name string) *corev1.Pod {
-	return r.registeredPods[name]
+	obj, exists, err := r.store.GetByKey(name)
+	if err != nil || !exists {
+		return nil
+	}
+
+	pod, ok := obj.(*corev1.Pod)
+	if !ok || pod.Annotations["dsv"] != r.tenant {
+		return nil
+	}
+
+	return pod
 }
 
 func (r *podRegistry) Done() {
-	close(r.create)
-	close(r.update)
-	close(r.remove)
+	close(r.stop)
 }
 
-func (r *podRegistry) addRegistry(pods <-chan *corev1.Pod) {
-	for p := range pods {
-		name := *p.Metadata.Name
-		nameSpace := *p.Metadata.Namespace
-		r.registeredPods[nameSpace+"/"+name] = p
-		log.WithFields(log.Fields{
-			"name": name,
-		}).Info("Pod Added")
+func logPodEvent(tenant, eventType string, obj any) {
+	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
+		obj = tombstone.Obj
 	}
-}
 
-func (r *podRegistry) updateRegistry(pods <-chan *corev1.Pod) {
-	for p := range pods {
-		name := *p.Metadata.Name
-		nameSpace := *p.Metadata.Namespace
-		r.registeredPods[nameSpace+"/"+name] = p
-		log.WithFields(log.Fields{
-			"name": name,
-		}).Info("Pod Updated")
+	pod, ok := obj.(*corev1.Pod)
+	if !ok || pod.Annotations["dsv"] != tenant {
+		return
 	}
-}
 
-func (r *podRegistry) removeRegistry(pods <-chan *corev1.Pod) {
-	for p := range pods {
-		name := *p.Metadata.Name
-		nameSpace := *p.Metadata.Namespace
-		delete(r.registeredPods, nameSpace+"/"+name)
-		log.WithFields(log.Fields{
-			"name": name,
-		}).Info("Pod Removed")
-	}
+	log.WithFields(log.Fields{
+		"event":     eventType,
+		"name":      pod.Name,
+		"namespace": pod.Namespace,
+		"message":   pod.Status.Message,
+	}).Info("Received Pod Event")
 }
