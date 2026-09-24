@@ -47,7 +47,7 @@ checksum:
   algorithm: sha256
   disable: false
 snapshot:
-  name_template: '{{ incpatch .Version }}-next'
+  version_template: '{{ incpatch .Version }}-next'
 changelog:
   disable: true
   sort: asc
