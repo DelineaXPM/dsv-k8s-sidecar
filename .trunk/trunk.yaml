@@ -33,7 +33,7 @@ runtimes:
   enabled:
     - node@22.16.0
     - python@3.10.8
-    - go@1.26.8
+    - go@1.26.10
 cli:
   version: 1.22.5
 
