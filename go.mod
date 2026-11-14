@@ -2,7 +2,7 @@ module github.com/DelineaXPM/dsv-k8s-sidecar
 
 go 1.26.0
 
-toolchain go1.26.10
+toolchain go1.26.11
 
 require (
 	github.com/bitfield/script v0.22.1
